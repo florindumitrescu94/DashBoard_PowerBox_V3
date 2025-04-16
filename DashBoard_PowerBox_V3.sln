@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashBoard_PowerBox_V3", "DashBoard_PowerBox_V3\DashBoard_PowerBox_V3.csproj", "{C708E487-E3A9-4073-A545-294B88674225}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashBoard_PowerBox_V3_WindowsApp", "DashBoard_PowerBox_V3_WindowsApp\DashBoard_PowerBox_V3_WindowsApp.csproj", "{8E8D406C-1838-4914-867D-AB602D0EAF3E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C708E487-E3A9-4073-A545-294B88674225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C708E487-E3A9-4073-A545-294B88674225}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C708E487-E3A9-4073-A545-294B88674225}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C708E487-E3A9-4073-A545-294B88674225}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E8D406C-1838-4914-867D-AB602D0EAF3E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8E8D406C-1838-4914-867D-AB602D0EAF3E}.Debug|Any CPU.Build.0 = Debug|x86
+		{8E8D406C-1838-4914-867D-AB602D0EAF3E}.Release|Any CPU.ActiveCfg = Release|x86
+		{8E8D406C-1838-4914-867D-AB602D0EAF3E}.Release|Any CPU.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
