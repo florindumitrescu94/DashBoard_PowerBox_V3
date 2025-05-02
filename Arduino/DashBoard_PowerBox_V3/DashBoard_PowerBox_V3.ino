@@ -7,6 +7,7 @@
 //INCLUDE LIBRARIES
 
 #include <DHTStable.h>;
+#include <EEPROM.h>;
 DHTStable DHT;
 
 
@@ -218,7 +219,18 @@ void processSerialCommand() {
   else if (cmd == "SETAUTOPWM_0") {
     PWM_AUTO = 0;
   }
-
+else if (cmd == "WRITEEEPROM") //writes current PWM1 and 2 values before disconnecting
+  {
+    EEPROM.update(1,PWM1);
+    EEPROM.update(2,PWM2);
+  } 
+  else if (cmd == "READEEPROM") //reads existing PWM1 and 2 values from EEPROM and sets them on PWM1 and 2 on connection
+  {
+    PWM1=EEPROM.read(1);
+    PWM2=EEPROM.read(2);
+    SET_PWM_POWER(1,PWM1);
+    SET_PWM_POWER(2,PWM2);
+  }
   
   else if (cmd.substring(0,7) == "SETPWM1") SET_PWM_POWER(1,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
   else if (cmd.substring(0,7) == "SETPWM2") SET_PWM_POWER(2,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
