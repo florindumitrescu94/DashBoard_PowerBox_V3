@@ -103,9 +103,18 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string SwitchDescEXT1 = "External 1";
         internal static string SwitchDescEXT2 = "External 2";
 
+        internal static string SwitchStateDC1Profile = "DC 1 State";
+        internal static string SwitchStateDC2Profile = "DC 2 State";
+        internal static string SwitchStateDC3Profile = "DC 3 State";
+        internal static string SwitchStateDC45Profile = "DC 4-5 State";
+        internal static string SwitchStatePWM1Profile = "PWM A State";
+        internal static string SwitchStatePWM2Profile = "PWM B State";
+        internal static string SwitchStateEXT1Profile = "External 1 State";
+        internal static string SwitchStateEXT2Profile = "External 2 State";
 
 
-        
+
+
         internal static string SwitchStateDC1 = "0";
         internal static string SwitchStateDC2 = "0";
         internal static string SwitchStateDC3 = "0";
@@ -385,11 +394,16 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                     objSerial.Connected = true;
                     System.Threading.Thread.Sleep(Convert.ToInt16(ConnectionDelay));
                     objSerial.ClearBuffers();
+                    objSerial.Transmit(">READEEPROM#");
                     workerCanRun = true;
+
                     // workerThread.Interrupt();
                 }
                 else
                 {
+                    objSerial.Transmit(">WRITEEEPROM#");
+                    SetSwitchValue(4, 0); ///Turns off PWM1 on disconnect
+                    SetSwitchValue(5, 0); ///Turns off PWM2 on disconnect
                     connectedState = false;
                     workerCanRun = false;
                     LogMessage("Connected Set", "Disconnecting from port " + comPort);
@@ -553,6 +567,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                         LogMessage("SetSwitchName", $"SetSwitchName({id}) - Invalid Switch ID!");
                         throw new InvalidValueException("Switch", numSwitch.ToString(), string.Format("0 to {0}", Convert.ToInt16(numSwitch) - 1));
                 }
+                WriteProfile();
             }
         }
 
@@ -699,6 +714,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                             LogMessage("SetSwitch", $"SetSwitch({id}) - not implemented");
                             throw new MethodNotImplementedException("SetSwitch");
                     }
+                    WriteProfile();
                 }
             }
         }
@@ -861,6 +877,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                         LogMessage("SetSwitchValue", $"SetSwitchValue({id}) = {value} - not implemented");
                         throw new MethodNotImplementedException("SetSwitchValue");
                     }
+                    WriteProfile();
                 }
             }
         }
@@ -977,8 +994,18 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 SwitchNameDC2 = driverProfile.GetValue(DriverProgId, SwitchNameDC2Profile, string.Empty, SwitchNameDC2Default);
                 SwitchNameDC3 = driverProfile.GetValue(DriverProgId, SwitchNameDC3Profile, string.Empty, SwitchNameDC3Default);
                 SwitchNameDC45 = driverProfile.GetValue(DriverProgId, SwitchNameDC45Profile, string.Empty, SwitchNameDC45Default);
+                SwitchNamePWM1 = driverProfile.GetValue(DriverProgId, SwitchNamePWM1Profile, string.Empty, SwitchNamePWM1Default);
+                SwitchNamePWM2 = driverProfile.GetValue(DriverProgId, SwitchNamePWM2Profile, string.Empty, SwitchNamePWM2Default);
                 SwitchNameEXT1 = driverProfile.GetValue(DriverProgId, SwitchNameEXT1Profile, string.Empty, SwitchNameEXT1Default);
                 SwitchNameEXT2 = driverProfile.GetValue(DriverProgId, SwitchNameEXT2Profile, string.Empty, SwitchNameEXT2Default);
+                SwitchStateDC1 = driverProfile.GetValue(DriverProgId, SwitchStateDC1Profile);
+                SwitchStateDC2 = driverProfile.GetValue(DriverProgId, SwitchStateDC2Profile);
+                SwitchStateDC3 = driverProfile.GetValue(DriverProgId, SwitchStateDC3Profile);
+                SwitchStateDC45 = driverProfile.GetValue(DriverProgId, SwitchStateDC45Profile);
+                SwitchStatePWM1 = driverProfile.GetValue(DriverProgId, SwitchStatePWM1Profile );
+                SwitchStatePWM2 = driverProfile.GetValue(DriverProgId, SwitchStatePWM2Profile);
+                SwitchStateEXT1 = driverProfile.GetValue(DriverProgId, SwitchStateEXT1Profile);
+                SwitchStateEXT2 = driverProfile.GetValue(DriverProgId, SwitchStateEXT2Profile);
             }
         }
 
@@ -996,8 +1023,19 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 driverProfile.WriteValue(DriverProgId, SwitchNameDC2Profile, SwitchNameDC2);
                 driverProfile.WriteValue(DriverProgId, SwitchNameDC3Profile, SwitchNameDC3);
                 driverProfile.WriteValue(DriverProgId, SwitchNameDC45Profile, SwitchNameDC45);
+                driverProfile.WriteValue(DriverProgId, SwitchNamePWM1Profile, SwitchNamePWM1);
+                driverProfile.WriteValue(DriverProgId, SwitchNamePWM2Profile, SwitchNamePWM2);
                 driverProfile.WriteValue(DriverProgId, SwitchNameEXT1Profile, SwitchNameEXT1);
                 driverProfile.WriteValue(DriverProgId, SwitchNameEXT2Profile, SwitchNameEXT2);
+                driverProfile.WriteValue(DriverProgId, SwitchStateDC1Profile, SwitchStateDC1);
+                driverProfile.WriteValue(DriverProgId, SwitchStateDC2Profile, SwitchStateDC2);
+                driverProfile.WriteValue(DriverProgId, SwitchStateDC3Profile, SwitchStateDC3);
+                driverProfile.WriteValue(DriverProgId, SwitchStateDC45Profile, SwitchStateDC45);
+                driverProfile.WriteValue(DriverProgId, SwitchStatePWM1Profile, SwitchStatePWM1);
+                driverProfile.WriteValue(DriverProgId, SwitchStatePWM2Profile, SwitchStatePWM2);
+                driverProfile.WriteValue(DriverProgId, SwitchStateEXT1Profile, SwitchStateEXT1);
+                driverProfile.WriteValue(DriverProgId, SwitchStateEXT2Profile, SwitchStateEXT2);
+
             }
         }
 
