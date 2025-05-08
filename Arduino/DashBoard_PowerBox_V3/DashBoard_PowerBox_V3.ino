@@ -207,12 +207,12 @@ void processSerialCommand() {
 
 
 //READS AND EXECUTES SERIAL COMMANDS FROM ASCOM DRIVER
-  if (cmd.substring(0,6) == "SETDC1") SET_DC_PIN(1,cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
-  else if (cmd.substring(0,6) == "SETDC2") SET_DC_PIN(2,cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());
-  else if (cmd.substring(0,6) == "SETDC3") SET_DC_PIN(3,cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
-  else if (cmd.substring(0,6) == "SETDC4") SET_DC_PIN(4,cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());  
-  else if (cmd.substring(0,7) == "SETEXT1") SET_EXT_PIN(1,cmd.substring((cmd.indexOf('.')+1),cmd.indexOf('.'+2)).toInt()); 
-  else if (cmd.substring(0,7) == "SETEXT2") SET_EXT_PIN(2,cmd.substring((cmd.indexOf('.')+1),cmd.indexOf('.'+2)).toInt()); 
+  if (cmd.substring(0,6) == "SETDC1") SET_DC_PIN(1,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
+  else if (cmd.substring(0,6) == "SETDC2") SET_DC_PIN(2,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());
+  else if (cmd.substring(0,6) == "SETDC3") SET_DC_PIN(3,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
+  else if (cmd.substring(0,6) == "SETDC4") SET_DC_PIN(4,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());  
+  else if (cmd.substring(0,7) == "SETEXT1") SET_EXT_PIN(1,(cmd.substring((cmd.indexOf('.')+1),cmd.indexOf('.')+2)).toInt()); 
+  else if (cmd.substring(0,7) == "SETEXT2") SET_EXT_PIN(2,(cmd.substring((cmd.indexOf('.')+1),cmd.indexOf('.')+2)).toInt()); 
   else if (cmd == "SETAUTOPWM_1") {
       PWM_AUTO = 1;
   }
@@ -425,7 +425,7 @@ void SET_PWM_POWER(int pwmno,int state) {
 void RUN_AUTO_PWM() {
   if (PWM_AUTO == 1)
   {
-    double delta_td = TEMP-DP;
+    double delta_td = TEMP-DEWPOINT;
     int delta_t = round(delta_td);
     if (delta_t <= 10)
     {
