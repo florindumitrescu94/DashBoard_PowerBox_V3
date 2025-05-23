@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 using System.Reflection;
+using System.Threading.Tasks;
 namespace ASCOM.DashBoardPowerBoxV3App
 {
     
@@ -91,10 +92,10 @@ namespace ASCOM.DashBoardPowerBoxV3App
             currentPWMA.Text = "0";
             currentPWMB.Text = "0";
         }
-        public void Stopwatch() // clock
+        public async void Stopwatch() // clock
         {
             
-            while (true)
+            while (driver.Connected)
             {
                 if (seconds < 60)
                 {
@@ -129,18 +130,18 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 {
                     secondsString = seconds.ToString();
                 }
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
                 string stopwatch = hours.ToString() + ":" + minutesString + ":" + secondsString;
                 MethodInvoker clock = delegate () { runtime.Text = stopwatch.ToString(); };
                 this.Invoke(clock);
             }
 
         }
-        public void RefreshData() //refresh data every 5 seconds
+        public async void RefreshData() //refresh data every 5 seconds
         {
-            while (true)
+            while (driver.Connected)
             {
-                Thread.Sleep(5000);
+                await Task.Delay(5000);
                 MethodInvoker refresh = delegate ()
                 {
                     temp.Text = driver.GetSwitchValue(6).ToString();
@@ -148,15 +149,15 @@ namespace ASCOM.DashBoardPowerBoxV3App
                     dewpoint.Text = driver.GetSwitchValue(8).ToString();
                     voltage.Text = driver.GetSwitchValue(9).ToString();
                     currentPWMA.Text = driver.GetSwitchValue(4).ToString();
-                    valuePWMA.Text = currentPWMA.Text;
+                    //valuePWMA.Text = currentPWMA.Text;
                     currentPWMB.Text = driver.GetSwitchValue(5).ToString();
-                    valuePWMB.Text = currentPWMB.Text;
+                    //valuePWMB.Text = currentPWMB.Text;
                     double delta_t_d = Convert.ToDouble(temp.Text) - Convert.ToDouble(dewpoint.Text);
                     int delta_t = Convert.ToInt16(Math.Round(delta_t_d));
 
-                    //current.Text = driver.GetSwitchValue(10).ToString();
-                    //power.Text = driver.GetSwitchValue(11).ToString();
-                    //energy.Text = driver.GetSwitchValue(12).ToString();
+                    current.Text = driver.GetSwitchValue(10).ToString();
+                    power.Text = driver.GetSwitchValue(11).ToString();
+                    energy.Text = driver.GetSwitchValue(12).ToString();
                     if (autoPWMA.Checked)
                     {
                         previous_pwm_a = Int16.Parse(valuePWMA.Text);
@@ -361,9 +362,9 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 voltage.Text = driver.GetSwitchValue(9).ToString();
                 valuePWMA.Text = driver.GetSwitchValue(4).ToString();
                 valuePWMB.Text = driver.GetSwitchValue(5).ToString();
-                //current.Text = driver.GetSwitchValue(10).ToString();
-                //power.Text = driver.GetSwitchValue(11).ToString();
-                //energy.Text = driver.GetSwitchValue(12).ToString();
+                current.Text = driver.GetSwitchValue(10).ToString();
+                power.Text = driver.GetSwitchValue(11).ToString();
+                energy.Text = driver.GetSwitchValue(12).ToString();
                 //autoPWM.Checked = driver.GetSwitch(13);
                 autoPWMB.Enabled = true;
                 addPWMA.Enabled = true;
@@ -384,9 +385,9 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 namePWMA.Enabled = true;
                 namePWMB.Text= driver.GetSwitchName(5);
                 namePWMB.Enabled = true;
-                //nameEXT1.Text= driver.GetSwitchName(14);
+                nameEXT1.Text= driver.GetSwitchName(14);
                 nameEXT1.Enabled = true;
-                //nameEXT2.Text= driver.GetSwitchName(15);
+                nameEXT2.Text= driver.GetSwitchName(15);
                 nameEXT2.Enabled = true;
                 buttonDC1.Checked = driver.GetSwitch(0);
                 buttonDC1.Enabled = true;
@@ -404,9 +405,9 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 Mid_PWMB.Enabled = true;
                 autoPWMA.Enabled = true;
                 autoPWMB.Enabled = true;
-                //buttonEXT1.Checked = driver.GetSwitch(14);
+                buttonEXT1.Checked = driver.GetSwitch(14);
                 buttonEXT1.Enabled = true;
-                //buttonEXT2.Checked = driver.GetSwitch(15);
+                buttonEXT2.Checked = driver.GetSwitch(15);
                 buttonEXT2.Enabled = true;
                 currentPWMA.Text = driver.GetSwitchValue(4).ToString();
                 currentPWMB.Text = driver.GetSwitchValue(5).ToString();
@@ -551,6 +552,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             if (IsConnected)
             {
                 driver.SetSwitch(0, buttonDC1.Checked);
+                Thread.Sleep(200);
                 buttonDC1.Checked = driver.GetSwitch(0);
             }
         }
@@ -560,6 +562,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             if (IsConnected)
             {
                 driver.SetSwitch(1, buttonDC2.Checked);
+                Thread.Sleep(200);
                 buttonDC2.Checked = driver.GetSwitch(1);
             }
         }
@@ -569,6 +572,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             if (IsConnected)
             {
                 driver.SetSwitch(2, buttonDC3.Checked);
+                Thread.Sleep(200);
                 buttonDC3.Checked = driver.GetSwitch(2);
             }
         }
@@ -578,6 +582,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             if (IsConnected)
             {
                 driver.SetSwitch(3, buttonDC45.Checked);
+                Thread.Sleep(200);
                 buttonDC45.Checked = driver.GetSwitch(3);
              
             }
@@ -588,6 +593,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             if (IsConnected)
             {
                 driver.SetSwitch(14, buttonEXT1.Checked);
+                Thread.Sleep(200);
                 buttonEXT1.Checked = driver.GetSwitch(14);
             }
         }
@@ -597,6 +603,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             if (IsConnected)
             {
                 driver.SetSwitch(15, buttonEXT2.Checked);
+                Thread.Sleep(200);
                 buttonEXT2.Checked = driver.GetSwitch(15);
             }
         }

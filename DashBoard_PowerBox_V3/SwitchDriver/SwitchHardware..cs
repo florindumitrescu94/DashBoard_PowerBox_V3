@@ -84,6 +84,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string SwitchNameA = "Auto PWM";
         internal static string SwitchNameEXT1 = "EXT 1";
         internal static string SwitchNameEXT2 = "EXT 2";
+        internal static string SerialString;
 
         
         internal static string SwitchDescDC1 = "DC Port 1";
@@ -389,12 +390,14 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                     string numComPort;
                     numComPort = comPort.Replace("COM", "");
                     objSerial.Port = Convert.ToInt16(numComPort);
-                    objSerial.Speed = (SerialSpeed)9600;
+                    objSerial.Speed = (SerialSpeed)115200;
                     objSerial.ReceiveTimeout = 5;
                     objSerial.Connected = true;
                     System.Threading.Thread.Sleep(Convert.ToInt16(ConnectionDelay));
                     objSerial.ClearBuffers();
-                    objSerial.Transmit(">READEEPROM#");
+                    objSerial.Transmit(">READEEPROM#"); 
+                    objSerial.Transmit(">REFRESHDATA#");
+                    SerialString = objSerial.ReceiveTerminated("#").Replace("#", "");
                     workerCanRun = true;
 
                     // workerThread.Interrupt();
@@ -652,31 +655,42 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static bool GetSwitch(short id)
         {
             Validate("GetSwitch", id);
-            double DC1;
-            double DC2;
-            double DC3;
-            double DC45;
-            double EXT1;
-            double EXT2;
-            double AUTOPWM;
             using (var driverProfile = new Profile())
             {
                 driverProfile.DeviceType = "Switch";
-                objSerial.Transmit(">REFRESHDATA#");
-                SerialCommands = objSerial.ReceiveTerminated("#").Replace("#", "").Split(':');
-                switch (id)
-                { 
-                    case 0: DC1 = Convert.ToDouble(SerialCommands[0]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC1))); return NumberToBool(DC1); 
-                    case 1: DC2 = Convert.ToDouble(SerialCommands[1]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC2))); return NumberToBool(DC2);
-                    case 2: DC3 = Convert.ToDouble(SerialCommands[2]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC3))); return NumberToBool(DC3); 
-                    case 3: DC45 = Convert.ToDouble(SerialCommands[3]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC45))); return NumberToBool(DC45);
-                    case 13: AUTOPWM = Convert.ToDouble(SerialCommands[13]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(AUTOPWM))); return NumberToBool(AUTOPWM);
-                    case 14: EXT1 = Convert.ToDouble(SerialCommands[14]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(EXT1))); return NumberToBool(EXT1);
-                    case 15: EXT2 = Convert.ToDouble(SerialCommands[15]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(EXT2))); return NumberToBool(EXT2);
-                
-                    default:
-                        LogMessage("GetSwitch", $"GetSwitch({id}) - not implemented");
-                        throw new MethodNotImplementedException("GetSwitch");
+                if ((id == 0) || (id == 1) || (id == 2) || (id == 3) || (id == 13) || (id == 14) || (id == 15))
+                {
+                    string Message = ">GET" + id + "#";
+                    objSerial.Transmit(Message);
+                    string Received = objSerial.ReceiveTerminated("#").Replace("#", "");
+                    LogMessage(Message, Received);
+                    bool rtrn = NumberToBool(Convert.ToDouble(Received));
+                    switch (id)
+                    {
+                        case 0: SwitchStateDC1 = Received; break;
+                        //Convert.ToDouble(SerialCommands[0]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC1))); return NumberToBool(DC1); 
+                        case 1: SwitchStateDC2 = Received; break;
+                        //Convert.ToDouble(SerialCommands[1]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC2))); return NumberToBool(DC2);
+                        case 2: SwitchStateDC3 = Received; break;
+                        //Convert.ToDouble(SerialCommands[2]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC3))); return NumberToBool(DC3); 
+                        case 3: SwitchStateDC45 = Received; break;
+                        //Convert.ToDouble(SerialCommands[3]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC45))); return NumberToBool(DC45);
+                        case 13: SwitchStateA = Received; break;
+                        //Convert.ToDouble(SerialCommands[13]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(AUTOPWM))); return NumberToBool(AUTOPWM);
+                        case 14: SwitchStateEXT1 = Received; break;
+                        //Convert.ToDouble(SerialCommands[14]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(EXT1))); return NumberToBool(EXT1);
+                        case 15: SwitchStateEXT2 = Received; break;
+                        //Convert.ToDouble(SerialCommands[15]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(EXT2))); return NumberToBool(EXT2);
+                        default:
+                            break;
+                    }
+                    return rtrn;
+                    
+                }
+                else 
+                {
+                    LogMessage("GetSwitch", $"GetSwitch({id}) - not implemented");
+                    throw new MethodNotImplementedException("GetSwitch");
                 }
             }
         }
@@ -714,7 +728,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                             LogMessage("SetSwitch", $"SetSwitch({id}) - not implemented");
                             throw new MethodNotImplementedException("SetSwitch");
                     }
-                    WriteProfile();
+                    //WriteProfile();
                 }
             }
         }
@@ -737,8 +751,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 case 1: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
                 case 2: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
                 case 3: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
-                case 4: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
-                case 5: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
+                case 4: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 100;
+                case 5: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 100;
                 case 6: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 100"); return 100;
                 case 7: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 100"); return 100;
                 case 8: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 100"); return 100;
@@ -828,13 +842,14 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static double GetSwitchValue(short id)
         {
             Validate("GetSwitchValue", id);
-            objSerial.Transmit(">REFRESHDATA#");
-            string SerialString = objSerial.ReceiveTerminated("#").Replace("#", "");
-            SerialCommands = SerialString.Split(':');
-            if (new[] { 4, 5, 6, 7, 8, 9, 10, 11, 12}.Contains(id))
+            string Message = ">GET" + id + "#";
+            objSerial.Transmit(Message);
+            string Received = objSerial.ReceiveTerminated("#").Replace("#", "");
+            LogMessage(Message, Received);
+            if ((id == 4) || (id == 5) || (id == 6) || (id == 7) || (id == 8) || (id == 9) || (id == 10) || (id == 11) || (id == 12))
             {
-                return Convert.ToDouble(SerialCommands[id]);
-            }    
+                return Convert.ToDouble(Received);
+            }   
             else
             {      LogMessage("GetSwitchValue", $"GetSwitchValue({id}) - not implemented");
                     throw new MethodNotImplementedException("GetSwitchValue");

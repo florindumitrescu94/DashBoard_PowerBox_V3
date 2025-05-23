@@ -15,14 +15,14 @@ DHTStable DHT;
 
 
 //CODE VARIABLES
-int DC1 = 1;
-int DC2 = 1;
-int DC3 = 1;
-int DC45 = 1;
-int EXT1 = 0;
-int EXT2 = 0;
-int PWM1 = 0;
-int PWM2 = 0;
+int DC1;
+int DC2;
+int DC3;
+int DC45;
+int EXT1;
+int EXT2;
+int PWM1;
+int PWM2;
 int level = 15; // equivalent to Mid in Control Center app, decrease number to lower agresivity, increase to raise (10 is low, 15 is mid, 20 is High). this determines how fast the power reaches 100% from the moment TEMP-Dew Point gets lower than 10 degrees.
 int PWM_AUTO = 0;
 float TEMP = 0.0;
@@ -68,15 +68,15 @@ String line;                              // command buffer
 //CHANGE ACS_VARIANT WITH YOUR ACS CHIP VARIANT (5A, 20A, 30A)
 const int ACS_Variant = 20; //A
 //PINS
-const int DC1_PIN = 6;
+const int DC1_PIN = 4 ;
 const int DC2_PIN = 5;
-const int DC3_PIN = 4;
+const int DC3_PIN = 6;
 const int DC45_PIN = 3;
 const int EXT1_PIN = 7;
 const int EXT2_PIN = 8;
 const int PWM1_PIN = 10;
-const int PWM2_PIN = 11;
-const int DHT22_DATA = 3;
+const int PWM2_PIN = 9;
+const int DHT22_DATA = 2;
 const int VM = A0;
 const int AM = A1;
 
@@ -120,28 +120,38 @@ void setup()
 
 
    //
-    digitalWrite(DC1_PIN,HIGH);
-    digitalWrite(DC2_PIN,HIGH);
-    digitalWrite(DC3_PIN,HIGH);
-    digitalWrite(DC45_PIN,HIGH);
+   DC1=EEPROM.read(3);
+   DC2=EEPROM.read(4);
+   DC3=EEPROM.read(5);
+   DC45=EEPROM.read(6);
+   EXT1=EEPROM.read(7);
+   EXT2=EEPROM.read(8);
+   PWM1=EEPROM.read(1);
+   PWM2=EEPROM.read(2);
+    digitalWrite(DC1_PIN,DC1);
+    digitalWrite(DC2_PIN,DC2);
+    digitalWrite(DC3_PIN,DC3);
+    digitalWrite(DC45_PIN,DC45);
    //SETTING DEFAULT ON FOR DC PINS, CHANGE AS YOU NEED
     
     
     
     //
-    digitalWrite(EXT1_PIN,LOW);
-    digitalWrite(EXT2_PIN,LOW);
+    digitalWrite(EXT1_PIN,EXT1);
+    digitalWrite(EXT2_PIN,EXT2);
+    analogWrite(PWM1_PIN,EEPROM.read(1));
+    analogWrite(PWM2_PIN,EEPROM.read(2));
     // SETTING DEFAULT OFF FOR EXTERNAL OPTOCOUPLERS, CHANGE AS YOU NEED
     
-    analogWrite(PWM1_PIN, 0);
-    analogWrite(PWM2_PIN, 0);
+    //analogWrite(PWM1_PIN, 0);
+    //analogWrite(PWM2_PIN, 0);
     // SETTING PWM PINS TO START WITH NO POWER, CHANGE IF NEEDED
 
     for ( int i=0; i < QUEUELENGTH; i++)
       queue[i] = (char*)malloc(MAXCOMMAND);
     line.reserve(MAXCOMMAND);
     
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.flush();
 
     switch (ACS_Variant){
@@ -211,8 +221,8 @@ void processSerialCommand() {
   else if (cmd.substring(0,6) == "SETDC2") SET_DC_PIN(2,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());
   else if (cmd.substring(0,6) == "SETDC3") SET_DC_PIN(3,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
   else if (cmd.substring(0,6) == "SETDC4") SET_DC_PIN(4,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());  
-  else if (cmd.substring(0,7) == "SETEXT1") SET_EXT_PIN(1,(cmd.substring((cmd.indexOf('.')+1),cmd.indexOf('.')+2)).toInt()); 
-  else if (cmd.substring(0,7) == "SETEXT2") SET_EXT_PIN(2,(cmd.substring((cmd.indexOf('.')+1),cmd.indexOf('.')+2)).toInt()); 
+  else if (cmd.substring(0,7) == "SETEXT1") SET_EXT_PIN(1,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
+  else if (cmd.substring(0,7) == "SETEXT2") SET_EXT_PIN(2,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
   else if (cmd == "SETAUTOPWM_1") {
       PWM_AUTO = 1;
   }
@@ -223,6 +233,12 @@ else if (cmd == "WRITEEEPROM") //writes current PWM1 and 2 values before disconn
   {
     EEPROM.update(1,PWM1);
     EEPROM.update(2,PWM2);
+    EEPROM.update(3,DC1);
+    EEPROM.update(4,DC2);
+    EEPROM.update(5,DC3);
+    EEPROM.update(6,DC45);
+    EEPROM.update(7,EXT1);
+    EEPROM.update(8,EXT2);
   } 
   else if (cmd == "READEEPROM") //reads existing PWM1 and 2 values from EEPROM and sets them on PWM1 and 2 on connection
   {
@@ -234,41 +250,22 @@ else if (cmd == "WRITEEEPROM") //writes current PWM1 and 2 values before disconn
   
   else if (cmd.substring(0,7) == "SETPWM1") SET_PWM_POWER(1,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
   else if (cmd.substring(0,7) == "SETPWM2") SET_PWM_POWER(2,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
-  else if (cmd == "REFRESHDATA") //SEND DATA TO ASCOM
-  {
-    Serial.print(DC1); // 0
-    Serial.print(":");
-    Serial.print(DC2); // 1
-    Serial.print(":");
-    Serial.print(DC3); // 2
-    Serial.print(":");
-    Serial.print(DC45); // 3
-    Serial.print(":");
-    Serial.print(PWM1); // 4
-    Serial.print(":");
-    Serial.print(PWM2); // 5
-    Serial.print(":");
-    Serial.print(TEMP); // 6
-    Serial.print(":");
-    Serial.print(HUM_REL); // 7
-    Serial.print(":");
-    Serial.print(DEWPOINT); // 8
-    Serial.print(":");
-    Serial.print(VOLT); // 9
-    Serial.print(":");
-    Serial.print(AMP); // 10
-    Serial.print(":");
-    Serial.print(PWR); // 11
-    Serial.print(":");
-    Serial.print(PWR_TOTAL); // 12
-    Serial.print(":"); 
-    Serial.print(PWM_AUTO); // 13
-    Serial.print(":");
-    Serial.print(EXT1); // 14
-    Serial.print(":");
-    Serial.print(EXT2); // 15
-    Serial.print("#");
-  }
+  else if (cmd == "GET0")  {Serial.print(DC1);Serial.println("#");}
+  else if (cmd == "GET1")  {Serial.print(DC2);Serial.println("#");}
+  else if (cmd == "GET2")  {Serial.print(DC3);Serial.println("#");}
+  else if (cmd == "GET3")  {Serial.print(DC45);Serial.println("#");}
+  else if (cmd == "GET4")  {Serial.print(PWM1);Serial.println("#");}
+  else if (cmd == "GET5")  {Serial.print(PWM2);Serial.println("#");}
+  else if (cmd == "GET6")  {Serial.print(TEMP);Serial.println("#");}
+  else if (cmd == "GET7")  {Serial.print(HUM_REL);Serial.println("#");}
+  else if (cmd == "GET8")  {Serial.print(DEWPOINT);Serial.println("#");}
+  else if (cmd == "GET9")  {Serial.print(VOLT);Serial.println("#");}
+  else if (cmd == "GET10")  {Serial.print(AMP);Serial.println("#");}
+  else if (cmd == "GET11")  {Serial.print(PWR);Serial.println("#");}
+  else if (cmd == "GET12")  {Serial.print(PWR_TOTAL);Serial.println("#");}
+  else if (cmd == "GET13")  {Serial.print(PWM_AUTO);Serial.println("#");}
+  else if (cmd == "GET14")  {Serial.print(EXT1);Serial.println("#");}
+  else if (cmd == "GET15")  {Serial.print(EXT2);Serial.println("#");}
 }
 
 
@@ -323,21 +320,25 @@ void SET_DC_PIN(int pin, int state){
        {
         digitalWrite(DC1_PIN, LOW);
         DC1 = 0;
+        
        }
        else if (pin == 2) 
        {
         digitalWrite(DC2_PIN, LOW);
         DC2 = 0;
+        
        }
        else if (pin == 3) 
        {
         digitalWrite(DC3_PIN, LOW);
         DC3 = 0;
+        
        }
-       else if (pin == 45) 
+       else if (pin == 4) 
        {
         digitalWrite(DC45_PIN, LOW);
         DC45 = 0;
+        
        }
        }
       else if (state == 1) 
@@ -346,21 +347,25 @@ void SET_DC_PIN(int pin, int state){
        {
         digitalWrite(DC1_PIN, HIGH);
         DC1 = 1;
+        
        }
        else if (pin == 2) 
        {
         digitalWrite(DC2_PIN, HIGH);
         DC2 = 1;
+        
        }
        else if (pin == 3) 
        {
         digitalWrite(DC3_PIN, HIGH);
         DC3 = 1;
+         
        }
        else if (pin == 4) 
        {
       digitalWrite(DC45_PIN, HIGH);
       DC45 = 1;
+       
        }
       }
 }
@@ -376,11 +381,13 @@ void SET_EXT_PIN(int pin, int state){
        {
         digitalWrite(EXT1_PIN, LOW);
         EXT1 = 0;
+         
        }
        else if (pin == 2) 
        {
         digitalWrite(EXT2_PIN, LOW);
         EXT2 = 0;
+        
        }
        }
       else if (state == 1) 
@@ -389,11 +396,13 @@ void SET_EXT_PIN(int pin, int state){
        {
         digitalWrite(EXT1_PIN, HIGH);
         EXT1 = 1;
+        
        }
        else if (pin == 2) 
        {
         digitalWrite(EXT2_PIN, HIGH);
         EXT2 = 1;
+        
        }
       }
 }
@@ -462,7 +471,7 @@ void RUN_AUTO_PWM() {
     }
     VOLTAGE_SAMPLE_SUM /=150;
     VOLT_TEMP = (VOLTAGE_SAMPLE_SUM * 5.0) / 1024.0;   
-    VOLT = VOLT_TEMP / 0.0982;        
+    VOLT = VOLT_TEMP / 0.0894;        
     if (VOLT < 0.1) VOLT=0.0;    
     CURRENT_SAMPLE_SUM=0;
     for (int i=0;i<150;i++)
@@ -473,14 +482,15 @@ void RUN_AUTO_PWM() {
     AMP_AVERAGE[AVERAGE_COUNT] = (2.494 - ((CURRENT_SAMPLE_SUM/150)*(5.0/1024.0))) / ACS_resolution;
     AVGAMP=0;
     for (int c=0;c<150;c++) AVGAMP += AMP_AVERAGE[c];
-    AMP = AVGAMP/150;
+    AMP = (AVGAMP*-1)/150;
     if (AMP< 0.01) AMP=0.0;
     PWR_TOTAL_S = PWR_TOTAL_S + ((((PWR+(VOLT*AMP))/2)*(time1-time2))/1000); // total power in W*s between cycles
     PWR = VOLT * AMP;
     AVERAGE_COUNT = AVERAGE_COUNT + 1;
     time2=millis();
     PWR_TOTAL_S = PWR_TOTAL_S + ((PWR*(time2-time1))/1000); // total power in W*s
-    PWR_TOTAL = PWR_TOTAL_S/3600;  // Total power used in W*h                                   
+    PWR_TOTAL = PWR_TOTAL_S/3600;  // Total power used in W*h                      
+    //Serial.println(AVGAMP);             
 }
 //END GET POWER USAGE
 

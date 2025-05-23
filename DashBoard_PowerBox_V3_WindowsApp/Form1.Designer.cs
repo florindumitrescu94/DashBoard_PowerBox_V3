@@ -579,6 +579,7 @@
             this.groupSensors.Controls.Add(this.label13);
             this.groupSensors.Controls.Add(this.label14);
             this.groupSensors.Controls.Add(this.label15);
+            this.groupSensors.ForeColor = System.Drawing.Color.Salmon;
             this.groupSensors.Location = new System.Drawing.Point(290, 135);
             this.groupSensors.Name = "groupSensors";
             this.groupSensors.Size = new System.Drawing.Size(343, 166);
