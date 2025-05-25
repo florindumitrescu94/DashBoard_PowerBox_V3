@@ -301,9 +301,10 @@
             this.label4.ForeColor = System.Drawing.Color.Salmon;
             this.label4.Location = new System.Drawing.Point(6, 130);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 13);
+            this.label4.Size = new System.Drawing.Size(46, 13);
             this.label4.TabIndex = 14;
-            this.label4.Text = "Run time";
+            this.label4.Text = "Runtime";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label5
             // 

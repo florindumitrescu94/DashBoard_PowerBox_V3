@@ -16,6 +16,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
         internal static string secondsString = "00";
         internal static int previous_pwm_a = 0;
         internal static int previous_pwm_b = 0;
+        internal static bool driverConnected;
         System.Threading.Thread t;
         System.Threading.Thread clk;
         
@@ -95,7 +96,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
         public async void Stopwatch() // clock
         {
             
-            while (driver.Connected)
+            while (driverConnected)
             {
                 if (seconds < 60)
                 {
@@ -141,106 +142,111 @@ namespace ASCOM.DashBoardPowerBoxV3App
         {
             while (driver.Connected)
             {
-                await Task.Delay(5000);
+                await Task.Delay(3000);
                 MethodInvoker refresh = delegate ()
                 {
-                    buttonDC1.Checked = driver.GetSwitch(0);
-                    buttonDC2.Checked = driver.GetSwitch(1);
-                    buttonDC3.Checked = driver.GetSwitch(2);
-                    buttonDC45.Checked = driver.GetSwitch(3);
-                    currentPWMA.Text = driver.GetSwitchValue(4).ToString();
-                    currentPWMB.Text = driver.GetSwitchValue(5).ToString();
-                    buttonEXT1.Checked = driver.GetSwitch(14);
-                    buttonEXT2.Checked = driver.GetSwitch(15);
-                    temp.Text = driver.GetSwitchValue(6).ToString();
-                    humidity.Text = driver.GetSwitchValue(7).ToString();
-                    dewpoint.Text = driver.GetSwitchValue(8).ToString();
-                    voltage.Text = driver.GetSwitchValue(9).ToString();
-                    currentPWMA.Text = driver.GetSwitchValue(4).ToString();
-                    //valuePWMA.Text = currentPWMA.Text;
-                    currentPWMB.Text = driver.GetSwitchValue(5).ToString();
-                    //valuePWMB.Text = currentPWMB.Text;
-                    double delta_t_d = Convert.ToDouble(temp.Text) - Convert.ToDouble(dewpoint.Text);
-                    int delta_t = Convert.ToInt16(Math.Round(delta_t_d));
-                    driver.SetSwitch(13,false); //Turn Arduino-level AUTO PWM off, since dedicated software uses 3 separate levels;
-                    current.Text = driver.GetSwitchValue(10).ToString();
-                    power.Text = driver.GetSwitchValue(11).ToString();
-                    energy.Text = driver.GetSwitchValue(12).ToString();
-                    if (autoPWMA.Checked)
+                    while (driver.Connected)
                     {
-                        previous_pwm_a = Int16.Parse(valuePWMA.Text);
-                        if (levelA.Text == "Low")
+                        buttonDC1.Checked = driver.GetSwitch(0);
+                        buttonDC2.Checked = driver.GetSwitch(1);
+                        buttonDC3.Checked = driver.GetSwitch(2);
+                        buttonDC45.Checked = driver.GetSwitch(3);
+                        currentPWMA.Text = driver.GetSwitchValue(4).ToString();
+                        currentPWMB.Text = driver.GetSwitchValue(5).ToString();
+                        buttonEXT1.Checked = driver.GetSwitch(14);
+                        buttonEXT2.Checked = driver.GetSwitch(15);
+                        temp.Text = driver.GetSwitchValue(6).ToString();
+                        humidity.Text = driver.GetSwitchValue(7).ToString();
+                        dewpoint.Text = driver.GetSwitchValue(8).ToString();
+                        voltage.Text = driver.GetSwitchValue(9).ToString();
+                        currentPWMA.Text = driver.GetSwitchValue(4).ToString();
+                        //valuePWMA.Text = currentPWMA.Text;
+                        currentPWMB.Text = driver.GetSwitchValue(5).ToString();
+                        //valuePWMB.Text = currentPWMB.Text;
+                        double delta_t_d = Convert.ToDouble(temp.Text) - Convert.ToDouble(dewpoint.Text);
+                        int delta_t = Convert.ToInt16(Math.Round(delta_t_d));
+                        driver.SetSwitch(13, false); //Turn Arduino-level AUTO PWM off, since dedicated software uses 3 separate levels;
+                        current.Text = driver.GetSwitchValue(10).ToString();
+                        power.Text = driver.GetSwitchValue(11).ToString();
+                        energy.Text = driver.GetSwitchValue(12).ToString();
+                        if (autoPWMA.Checked)
                         {
-                            if (delta_t <= 10)
+                            previous_pwm_a = Int16.Parse(valuePWMA.Text);
+                            if (levelA.Text == "Low")
                             {
-                                int pwma_low = (10 - delta_t) * 10;
-                                if (pwma_low >= 100) { pwma_low = 100; };
-                                valuePWMA.Text = pwma_low.ToString();
+                                if (delta_t <= 10)
+                                {
+                                    int pwma_low = (10 - delta_t) * 10;
+                                    if (pwma_low >= 100) { pwma_low = 100; };
+                                    valuePWMA.Text = pwma_low.ToString();
+                                }
+                                else { valuePWMA.Text = "0"; }
                             }
-                            else { valuePWMA.Text = "0"; }
+                            else if (levelA.Text == "Mid")
+                            {
+                                if (delta_t <= 10)
+                                {
+                                    int pwma_mid = (10 - delta_t) * 15;
+                                    if (pwma_mid >= 100) { pwma_mid = 100; };
+                                    valuePWMA.Text = pwma_mid.ToString();
+                                }
+                                else { valuePWMA.Text = "0"; }
+                            }
+                            else if (levelA.Text == "High")
+                            {
+                                if (delta_t <= 10)
+                                {
+                                    int pwma_high = (10 - delta_t) * 20;
+                                    if (pwma_high >= 100) { pwma_high = 100; };
+                                    valuePWMA.Text = pwma_high.ToString();
+                                }
+                                else { valuePWMA.Text = "0"; }
+                            }
+                            if (previous_pwm_a != Int16.Parse(valuePWMA.Text)) { driver.SetSwitchValue(4, Convert.ToDouble(valuePWMA.Text)); currentPWMA.Text = driver.GetSwitchValue(4).ToString(); }
                         }
-                        else if (levelA.Text == "Mid")
+                        if (autoPWMB.Checked)
                         {
-                            if (delta_t <= 10)
+                            previous_pwm_b = Int16.Parse(valuePWMB.Text);
+                            if (levelB.Text == "Low")
                             {
-                                int pwma_mid = (10 - delta_t) * 15;
-                                if (pwma_mid >= 100) { pwma_mid = 100; };
-                                valuePWMA.Text = pwma_mid.ToString();
+                                if (delta_t <= 10)
+                                {
+                                    int pwmb_low = (10 - delta_t) * 10;
+                                    if (pwmb_low >= 100) { pwmb_low = 100; };
+                                    valuePWMB.Text = pwmb_low.ToString();
+                                }
+                                else { valuePWMB.Text = "0"; }
                             }
-                            else { valuePWMA.Text = "0"; }
-                        }
-                        else if (levelA.Text == "High")
-                        {
-                            if (delta_t <= 10)
+                            else if (levelB.Text == "Mid")
                             {
-                                int pwma_high = (10 - delta_t) * 20;
-                                if (pwma_high >= 100) { pwma_high = 100; };
-                                valuePWMA.Text = pwma_high.ToString();
+                                if (delta_t <= 10)
+                                {
+                                    int pwmb_mid = (10 - delta_t) * 15;
+                                    if (pwmb_mid >= 100) { pwmb_mid = 100; };
+                                    valuePWMB.Text = pwmb_mid.ToString();
+                                }
+                                else { valuePWMB.Text = "0"; }
                             }
-                            else { valuePWMA.Text = "0"; }
-                        }
-                        if (previous_pwm_a != Int16.Parse(valuePWMA.Text)) { driver.SetSwitchValue(4, Convert.ToDouble(valuePWMA.Text)); currentPWMA.Text = driver.GetSwitchValue(4).ToString(); }
-                    }
-                    if (autoPWMB.Checked)
-                    {
-                        previous_pwm_b = Int16.Parse(valuePWMB.Text);
-                        if (levelB.Text == "Low")
-                        {
-                            if (delta_t <= 10)
+                            else if (levelB.Text == "High")
                             {
-                                int pwmb_low = (10 - delta_t) * 10;
-                                if (pwmb_low >= 100) { pwmb_low = 100; };
-                                valuePWMB.Text = pwmb_low.ToString();
+                                if (delta_t <= 10)
+                                {
+                                    int pwmb_high = (10 - delta_t) * 20;
+                                    if (pwmb_high >= 100) { pwmb_high = 100; };
+                                    valuePWMB.Text = pwmb_high.ToString();
+                                }
+                                else { valuePWMB.Text = "0"; }
                             }
-                            else { valuePWMB.Text = "0"; }
+                            if (previous_pwm_b != Int16.Parse(valuePWMB.Text)) { driver.SetSwitchValue(5, Convert.ToDouble(valuePWMB.Text)); currentPWMB.Text = driver.GetSwitchValue(5).ToString(); }
                         }
-                        else if (levelB.Text == "Mid")
-                        {
-                            if (delta_t <= 10)
-                            {
-                                int pwmb_mid = (10 - delta_t) * 15;
-                                if (pwmb_mid >= 100) { pwmb_mid = 100; };
-                                valuePWMB.Text = pwmb_mid.ToString();
-                            }
-                            else { valuePWMB.Text = "0"; }
-                        }
-                        else if (levelB.Text == "High")
-                        {
-                            if (delta_t <= 10)
-                            {
-                                int pwmb_high = (10 - delta_t) * 20;
-                                if (pwmb_high >= 100) { pwmb_high = 100; };
-                                valuePWMB.Text = pwmb_high.ToString();
-                            }
-                            else { valuePWMB.Text = "0"; }
-                        }
-                        if (previous_pwm_b != Int16.Parse(valuePWMB.Text)) { driver.SetSwitchValue(5, Convert.ToDouble(valuePWMB.Text)); currentPWMB.Text = driver.GetSwitchValue(5).ToString(); }
                     }
 
                 };
+                Thread.Sleep(2000);
                 this.Invoke(refresh);
             }
         }
+            
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (IsConnected)
@@ -261,6 +267,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             {
                 t.Abort();
                 clk.Abort();
+                
                 
                 seconds = 0;
                 minutes = 0;
@@ -347,6 +354,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 valuePWMB.Text = "0";
                 currentPWMA.Text = "0";
                 currentPWMB.Text = "0";
+                driverConnected = false;
 
             }
             else
@@ -374,6 +382,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 power.Text = driver.GetSwitchValue(11).ToString();
                 energy.Text = driver.GetSwitchValue(12).ToString();
                 //autoPWM.Checked = driver.GetSwitch(13);
+                runtime.Text = "";
                 autoPWMB.Enabled = true;
                 addPWMA.Enabled = true;
                 addPWMB.Enabled = true;
@@ -423,6 +432,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 t.Start();
                 clk = new System.Threading.Thread(Stopwatch);
                 clk.Start();
+                driverConnected = true;
             }
             SetUIState();
         }
@@ -891,6 +901,11 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 driver.SetSwitchValue(5, 50);
                 currentPWMB.Text = "50";
             }
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

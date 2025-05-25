@@ -136,7 +136,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // comboBoxComPort
             // 
-            this.comboBoxComPort.BackColor = System.Drawing.Color.DimGray;
+            this.comboBoxComPort.BackColor = System.Drawing.Color.Black;
+            this.comboBoxComPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBoxComPort.ForeColor = System.Drawing.Color.Salmon;
             this.comboBoxComPort.FormattingEnabled = true;
             this.comboBoxComPort.Location = new System.Drawing.Point(88, 50);
             this.comboBoxComPort.Name = "comboBoxComPort";
@@ -156,7 +158,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // DC1Text
             // 
-            this.DC1Text.BackColor = System.Drawing.Color.DimGray;
+            this.DC1Text.BackColor = System.Drawing.Color.Black;
+            this.DC1Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DC1Text.ForeColor = System.Drawing.Color.Salmon;
             this.DC1Text.Location = new System.Drawing.Point(77, 130);
             this.DC1Text.Name = "DC1Text";
             this.DC1Text.Size = new System.Drawing.Size(100, 20);
@@ -164,7 +168,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // DC2Text
             // 
-            this.DC2Text.BackColor = System.Drawing.Color.DimGray;
+            this.DC2Text.BackColor = System.Drawing.Color.Black;
+            this.DC2Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DC2Text.ForeColor = System.Drawing.Color.Salmon;
             this.DC2Text.Location = new System.Drawing.Point(77, 156);
             this.DC2Text.Name = "DC2Text";
@@ -173,7 +178,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // DC3Text
             // 
-            this.DC3Text.BackColor = System.Drawing.Color.DimGray;
+            this.DC3Text.BackColor = System.Drawing.Color.Black;
+            this.DC3Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DC3Text.ForeColor = System.Drawing.Color.Salmon;
             this.DC3Text.Location = new System.Drawing.Point(77, 182);
             this.DC3Text.Name = "DC3Text";
@@ -182,7 +188,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // DC45Text
             // 
-            this.DC45Text.BackColor = System.Drawing.Color.DimGray;
+            this.DC45Text.BackColor = System.Drawing.Color.Black;
+            this.DC45Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DC45Text.ForeColor = System.Drawing.Color.Salmon;
             this.DC45Text.Location = new System.Drawing.Point(77, 208);
             this.DC45Text.Name = "DC45Text";
@@ -191,7 +198,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // PWMAText
             // 
-            this.PWMAText.BackColor = System.Drawing.Color.DimGray;
+            this.PWMAText.BackColor = System.Drawing.Color.Black;
+            this.PWMAText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PWMAText.ForeColor = System.Drawing.Color.Salmon;
             this.PWMAText.Location = new System.Drawing.Point(327, 131);
             this.PWMAText.Name = "PWMAText";
@@ -200,7 +208,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // PWMBText
             // 
-            this.PWMBText.BackColor = System.Drawing.Color.DimGray;
+            this.PWMBText.BackColor = System.Drawing.Color.Black;
+            this.PWMBText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PWMBText.ForeColor = System.Drawing.Color.Salmon;
             this.PWMBText.Location = new System.Drawing.Point(327, 157);
             this.PWMBText.Name = "PWMBText";
@@ -297,7 +306,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // EXT1Text
             // 
-            this.EXT1Text.BackColor = System.Drawing.Color.DimGray;
+            this.EXT1Text.BackColor = System.Drawing.Color.Black;
+            this.EXT1Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.EXT1Text.ForeColor = System.Drawing.Color.Salmon;
             this.EXT1Text.Location = new System.Drawing.Point(327, 183);
             this.EXT1Text.Name = "EXT1Text";
@@ -306,7 +316,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             // EXT2Text
             // 
-            this.EXT2Text.BackColor = System.Drawing.Color.DimGray;
+            this.EXT2Text.BackColor = System.Drawing.Color.Black;
+            this.EXT2Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.EXT2Text.ForeColor = System.Drawing.Color.Salmon;
             this.EXT2Text.Location = new System.Drawing.Point(327, 209);
             this.EXT2Text.Name = "EXT2Text";
