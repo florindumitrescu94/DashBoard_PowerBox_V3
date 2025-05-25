@@ -45,4 +45,6 @@ The circuit has, also, been redesigned to accomodate more switches and, in doing
 
 All the extra complexity has increased the power boxes' size, from 80 x 55 to 100 x 80, but it is still keeping a small enough size to be easily mounted on any telescope. 
 
+NOTE: When building the box, you can add a capacitor between the RST and GND pins of the Arduino, in order to keep it from resetting when connecting to the computer. If you do this, when programming the device, you will need to press the Reset button on the arduino when the IDE will get to the "Uploading" step.
+
 
