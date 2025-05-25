@@ -144,6 +144,14 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 await Task.Delay(5000);
                 MethodInvoker refresh = delegate ()
                 {
+                    buttonDC1.Checked = driver.GetSwitch(0);
+                    buttonDC2.Checked = driver.GetSwitch(1);
+                    buttonDC3.Checked = driver.GetSwitch(2);
+                    buttonDC45.Checked = driver.GetSwitch(3);
+                    currentPWMA.Text = driver.GetSwitchValue(4).ToString();
+                    currentPWMB.Text = driver.GetSwitchValue(5).ToString();
+                    buttonEXT1.Checked = driver.GetSwitch(14);
+                    buttonEXT2.Checked = driver.GetSwitch(15);
                     temp.Text = driver.GetSwitchValue(6).ToString();
                     humidity.Text = driver.GetSwitchValue(7).ToString();
                     dewpoint.Text = driver.GetSwitchValue(8).ToString();
@@ -154,7 +162,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
                     //valuePWMB.Text = currentPWMB.Text;
                     double delta_t_d = Convert.ToDouble(temp.Text) - Convert.ToDouble(dewpoint.Text);
                     int delta_t = Convert.ToInt16(Math.Round(delta_t_d));
-
+                    driver.SetSwitch(13,false); //Turn Arduino-level AUTO PWM off, since dedicated software uses 3 separate levels;
                     current.Text = driver.GetSwitchValue(10).ToString();
                     power.Text = driver.GetSwitchValue(11).ToString();
                     energy.Text = driver.GetSwitchValue(12).ToString();
@@ -553,7 +561,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             {
                 driver.SetSwitch(0, buttonDC1.Checked);
                 Thread.Sleep(200);
-                buttonDC1.Checked = driver.GetSwitch(0);
+                //buttonDC1.Checked = driver.GetSwitch(0);
             }
         }
 
@@ -563,7 +571,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             {
                 driver.SetSwitch(1, buttonDC2.Checked);
                 Thread.Sleep(200);
-                buttonDC2.Checked = driver.GetSwitch(1);
+                //buttonDC2.Checked = driver.GetSwitch(1);
             }
         }
 
@@ -573,7 +581,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             {
                 driver.SetSwitch(2, buttonDC3.Checked);
                 Thread.Sleep(200);
-                buttonDC3.Checked = driver.GetSwitch(2);
+                //buttonDC3.Checked = driver.GetSwitch(2);
             }
         }
 
@@ -583,7 +591,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             {
                 driver.SetSwitch(3, buttonDC45.Checked);
                 Thread.Sleep(200);
-                buttonDC45.Checked = driver.GetSwitch(3);
+                //buttonDC45.Checked = driver.GetSwitch(3);
              
             }
         }
@@ -594,7 +602,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             {
                 driver.SetSwitch(14, buttonEXT1.Checked);
                 Thread.Sleep(200);
-                buttonEXT1.Checked = driver.GetSwitch(14);
+                //buttonEXT1.Checked = driver.GetSwitch(14);
             }
         }
 
@@ -604,7 +612,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             {
                 driver.SetSwitch(15, buttonEXT2.Checked);
                 Thread.Sleep(200);
-                buttonEXT2.Checked = driver.GetSwitch(15);
+                //buttonEXT2.Checked = driver.GetSwitch(15);
             }
         }
 
@@ -673,7 +681,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             if (IsConnected)
             {
                 driver.SetSwitchValue(4, Convert.ToDouble(valuePWMA.Text));
-                currentPWMA.Text = driver.GetSwitchValue(4).ToString();
+                //currentPWMA.Text = driver.GetSwitchValue(4).ToString();
             }
             else
             {
@@ -686,7 +694,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
             if (IsConnected)
             {
                 driver.SetSwitchValue(5, Convert.ToDouble(valuePWMB.Text));
-                currentPWMB.Text = driver.GetSwitchValue(5).ToString();
+                //currentPWMB.Text = driver.GetSwitchValue(5).ToString();
             }
             else
             {

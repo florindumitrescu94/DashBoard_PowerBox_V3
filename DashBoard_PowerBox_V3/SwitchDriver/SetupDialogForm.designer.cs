@@ -57,6 +57,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
+            this.keepPWMon = new System.Windows.Forms.CheckBox();
+            this.KeepPortsOn = new System.Windows.Forms.CheckBox();
+            this.keepEXTOn = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picASCOM)).BeginInit();
             this.SuspendLayout();
             // 
@@ -64,7 +67,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             this.cmdOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.cmdOK.Location = new System.Drawing.Point(218, 247);
+            this.cmdOK.Location = new System.Drawing.Point(267, 294);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(72, 24);
             this.cmdOK.TabIndex = 0;
@@ -76,7 +79,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             this.cmdCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cmdCancel.Location = new System.Drawing.Point(306, 246);
+            this.cmdCancel.Location = new System.Drawing.Point(355, 293);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(72, 25);
             this.cmdCancel.TabIndex = 1;
@@ -99,7 +102,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.picASCOM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.picASCOM.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picASCOM.Image = ((System.Drawing.Image)(resources.GetObject("picASCOM.Image")));
-            this.picASCOM.Location = new System.Drawing.Point(337, 12);
+            this.picASCOM.Location = new System.Drawing.Point(379, 12);
             this.picASCOM.Name = "picASCOM";
             this.picASCOM.Size = new System.Drawing.Size(48, 56);
             this.picASCOM.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -124,7 +127,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.chkTrace.AutoSize = true;
             this.chkTrace.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkTrace.ForeColor = System.Drawing.Color.Salmon;
-            this.chkTrace.Location = new System.Drawing.Point(249, 50);
+            this.chkTrace.Location = new System.Drawing.Point(267, 50);
             this.chkTrace.Name = "chkTrace";
             this.chkTrace.Size = new System.Drawing.Size(70, 20);
             this.chkTrace.TabIndex = 6;
@@ -190,7 +193,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             this.PWMAText.BackColor = System.Drawing.Color.DimGray;
             this.PWMAText.ForeColor = System.Drawing.Color.Salmon;
-            this.PWMAText.Location = new System.Drawing.Point(278, 130);
+            this.PWMAText.Location = new System.Drawing.Point(327, 131);
             this.PWMAText.Name = "PWMAText";
             this.PWMAText.Size = new System.Drawing.Size(100, 20);
             this.PWMAText.TabIndex = 13;
@@ -199,7 +202,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             this.PWMBText.BackColor = System.Drawing.Color.DimGray;
             this.PWMBText.ForeColor = System.Drawing.Color.Salmon;
-            this.PWMBText.Location = new System.Drawing.Point(278, 156);
+            this.PWMBText.Location = new System.Drawing.Point(327, 157);
             this.PWMBText.Name = "PWMBText";
             this.PWMBText.Size = new System.Drawing.Size(100, 20);
             this.PWMBText.TabIndex = 14;
@@ -253,7 +256,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.ForeColor = System.Drawing.Color.Salmon;
-            this.label8.Location = new System.Drawing.Point(215, 132);
+            this.label8.Location = new System.Drawing.Point(264, 133);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 16);
             this.label8.TabIndex = 19;
@@ -264,7 +267,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.ForeColor = System.Drawing.Color.Salmon;
-            this.label9.Location = new System.Drawing.Point(215, 158);
+            this.label9.Location = new System.Drawing.Point(264, 159);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(53, 16);
             this.label9.TabIndex = 20;
@@ -296,7 +299,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             this.EXT1Text.BackColor = System.Drawing.Color.DimGray;
             this.EXT1Text.ForeColor = System.Drawing.Color.Salmon;
-            this.EXT1Text.Location = new System.Drawing.Point(278, 182);
+            this.EXT1Text.Location = new System.Drawing.Point(327, 183);
             this.EXT1Text.Name = "EXT1Text";
             this.EXT1Text.Size = new System.Drawing.Size(100, 20);
             this.EXT1Text.TabIndex = 13;
@@ -305,7 +308,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             // 
             this.EXT2Text.BackColor = System.Drawing.Color.DimGray;
             this.EXT2Text.ForeColor = System.Drawing.Color.Salmon;
-            this.EXT2Text.Location = new System.Drawing.Point(278, 208);
+            this.EXT2Text.Location = new System.Drawing.Point(327, 209);
             this.EXT2Text.Name = "EXT2Text";
             this.EXT2Text.Size = new System.Drawing.Size(100, 20);
             this.EXT2Text.TabIndex = 14;
@@ -315,7 +318,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.ForeColor = System.Drawing.Color.Salmon;
-            this.label13.Location = new System.Drawing.Point(215, 184);
+            this.label13.Location = new System.Drawing.Point(264, 185);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(41, 16);
             this.label13.TabIndex = 19;
@@ -326,7 +329,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label14.ForeColor = System.Drawing.Color.Salmon;
-            this.label14.Location = new System.Drawing.Point(215, 210);
+            this.label14.Location = new System.Drawing.Point(264, 211);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(44, 16);
             this.label14.TabIndex = 20;
@@ -337,7 +340,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label15.ForeColor = System.Drawing.Color.Salmon;
-            this.label15.Location = new System.Drawing.Point(276, 100);
+            this.label15.Location = new System.Drawing.Point(325, 101);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(43, 16);
             this.label15.TabIndex = 25;
@@ -348,18 +351,63 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label16.ForeColor = System.Drawing.Color.Salmon;
-            this.label16.Location = new System.Drawing.Point(215, 100);
+            this.label16.Location = new System.Drawing.Point(264, 101);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(32, 16);
             this.label16.TabIndex = 24;
             this.label16.Text = "Port";
+            // 
+            // keepPWMon
+            // 
+            this.keepPWMon.AutoSize = true;
+            this.keepPWMon.Checked = true;
+            this.keepPWMon.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.keepPWMon.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.keepPWMon.ForeColor = System.Drawing.Color.Salmon;
+            this.keepPWMon.Location = new System.Drawing.Point(17, 249);
+            this.keepPWMon.Name = "keepPWMon";
+            this.keepPWMon.Size = new System.Drawing.Size(241, 20);
+            this.keepPWMon.TabIndex = 26;
+            this.keepPWMon.Text = "Keep PWM Ports On on disconnect";
+            this.keepPWMon.UseVisualStyleBackColor = true;
+            // 
+            // KeepPortsOn
+            // 
+            this.KeepPortsOn.AutoSize = true;
+            this.KeepPortsOn.Checked = true;
+            this.KeepPortsOn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.KeepPortsOn.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.KeepPortsOn.ForeColor = System.Drawing.Color.Salmon;
+            this.KeepPortsOn.Location = new System.Drawing.Point(16, 275);
+            this.KeepPortsOn.Name = "KeepPortsOn";
+            this.KeepPortsOn.Size = new System.Drawing.Size(228, 20);
+            this.KeepPortsOn.TabIndex = 27;
+            this.KeepPortsOn.Text = "Keep DC Ports On on disconnect";
+            this.KeepPortsOn.UseVisualStyleBackColor = true;
+            // 
+            // keepEXTOn
+            // 
+            this.keepEXTOn.AutoSize = true;
+            this.keepEXTOn.Checked = true;
+            this.keepEXTOn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.keepEXTOn.Font = new System.Drawing.Font("Satoshi Medium", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.keepEXTOn.ForeColor = System.Drawing.Color.Salmon;
+            this.keepEXTOn.Location = new System.Drawing.Point(17, 301);
+            this.keepEXTOn.Name = "keepEXTOn";
+            this.keepEXTOn.Size = new System.Drawing.Size(227, 20);
+            this.keepEXTOn.TabIndex = 27;
+            this.keepEXTOn.Text = "Keep Ext Ports On on disconnect";
+            this.keepEXTOn.UseVisualStyleBackColor = true;
             // 
             // SetupDialogForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(397, 286);
+            this.ClientSize = new System.Drawing.Size(446, 333);
+            this.Controls.Add(this.keepEXTOn);
+            this.Controls.Add(this.KeepPortsOn);
+            this.Controls.Add(this.keepPWMon);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label11);
@@ -432,5 +480,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.CheckBox keepPWMon;
+        private System.Windows.Forms.CheckBox KeepPortsOn;
+        private System.Windows.Forms.CheckBox keepEXTOn;
     }
 }

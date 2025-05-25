@@ -115,10 +115,7 @@ void setup()
     pinMode(AM, INPUT);
 
 
-  //INITIALIZE PIN STATE
-
-
-
+  //INITIALIZE PIN STATE FROM EEPROM
    //
    DC1=EEPROM.read(3);
    DC2=EEPROM.read(4);
@@ -132,20 +129,10 @@ void setup()
     digitalWrite(DC2_PIN,DC2);
     digitalWrite(DC3_PIN,DC3);
     digitalWrite(DC45_PIN,DC45);
-   //SETTING DEFAULT ON FOR DC PINS, CHANGE AS YOU NEED
-    
-    
-    
-    //
     digitalWrite(EXT1_PIN,EXT1);
     digitalWrite(EXT2_PIN,EXT2);
-    analogWrite(PWM1_PIN,EEPROM.read(1));
-    analogWrite(PWM2_PIN,EEPROM.read(2));
-    // SETTING DEFAULT OFF FOR EXTERNAL OPTOCOUPLERS, CHANGE AS YOU NEED
-    
-    //analogWrite(PWM1_PIN, 0);
-    //analogWrite(PWM2_PIN, 0);
-    // SETTING PWM PINS TO START WITH NO POWER, CHANGE IF NEEDED
+    analogWrite(PWM1_PIN,PWM1);
+    analogWrite(PWM2_PIN,PWM2);
 
     for ( int i=0; i < QUEUELENGTH; i++)
       queue[i] = (char*)malloc(MAXCOMMAND);
@@ -229,7 +216,7 @@ void processSerialCommand() {
   else if (cmd == "SETAUTOPWM_0") {
     PWM_AUTO = 0;
   }
-else if (cmd == "WRITEEEPROM") //writes current PWM1 and 2 values before disconnecting
+else if (cmd == "WRITEEEPROM") //writes current values to EEPROM before disconnecting
   {
     EEPROM.update(1,PWM1);
     EEPROM.update(2,PWM2);
@@ -250,22 +237,57 @@ else if (cmd == "WRITEEEPROM") //writes current PWM1 and 2 values before disconn
   
   else if (cmd.substring(0,7) == "SETPWM1") SET_PWM_POWER(1,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
   else if (cmd.substring(0,7) == "SETPWM2") SET_PWM_POWER(2,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
-  else if (cmd == "GET0")  {Serial.print(DC1);Serial.println("#");}
-  else if (cmd == "GET1")  {Serial.print(DC2);Serial.println("#");}
-  else if (cmd == "GET2")  {Serial.print(DC3);Serial.println("#");}
-  else if (cmd == "GET3")  {Serial.print(DC45);Serial.println("#");}
-  else if (cmd == "GET4")  {Serial.print(PWM1);Serial.println("#");}
-  else if (cmd == "GET5")  {Serial.print(PWM2);Serial.println("#");}
-  else if (cmd == "GET6")  {Serial.print(TEMP);Serial.println("#");}
-  else if (cmd == "GET7")  {Serial.print(HUM_REL);Serial.println("#");}
-  else if (cmd == "GET8")  {Serial.print(DEWPOINT);Serial.println("#");}
-  else if (cmd == "GET9")  {Serial.print(VOLT);Serial.println("#");}
-  else if (cmd == "GET10")  {Serial.print(AMP);Serial.println("#");}
-  else if (cmd == "GET11")  {Serial.print(PWR);Serial.println("#");}
-  else if (cmd == "GET12")  {Serial.print(PWR_TOTAL);Serial.println("#");}
-  else if (cmd == "GET13")  {Serial.print(PWM_AUTO);Serial.println("#");}
-  else if (cmd == "GET14")  {Serial.print(EXT1);Serial.println("#");}
-  else if (cmd == "GET15")  {Serial.print(EXT2);Serial.println("#");}
+  else if (cmd == "GET0")  {Serial.print(DC1);Serial.print("#");}
+  else if (cmd == "GET1")  {Serial.print(DC2);Serial.print("#");}
+  else if (cmd == "GET2")  {Serial.print(DC3);Serial.print("#");}
+  else if (cmd == "GET3")  {Serial.print(DC45);Serial.print("#");}
+  else if (cmd == "GET4")  {Serial.print(PWM1);Serial.print("#");}
+  else if (cmd == "GET5")  {Serial.print(PWM2);Serial.print("#");}
+  else if (cmd == "GET6")  {Serial.print(TEMP);Serial.print("#");}
+  else if (cmd == "GET7")  {Serial.print(HUM_REL);Serial.print("#");}
+  else if (cmd == "GET8")  {Serial.print(DEWPOINT);Serial.print("#");}
+  else if (cmd == "GET9")  {Serial.print(VOLT);Serial.print("#");}
+  else if (cmd == "GET10")  {Serial.print(AMP);Serial.print("#");}
+  else if (cmd == "GET11")  {Serial.print(PWR);Serial.print("#");}
+  else if (cmd == "GET12")  {Serial.print(PWR_TOTAL);Serial.print("#");}
+  else if (cmd == "GET13")  {Serial.print(PWM_AUTO);Serial.print("#");}
+  else if (cmd == "GET14")  {Serial.print(EXT1);Serial.print("#");}
+  else if (cmd == "GET15")  {Serial.print(EXT2);Serial.print("#");}
+  else if (cmd = "REFRESH")
+  {
+    Serial.print(DC1);
+    Serial.print(":");
+    Serial.print(DC2);
+    Serial.print(":");
+    Serial.print(DC3);
+    Serial.print(":");
+    Serial.print(DC45);
+    Serial.print(":");
+    Serial.print(PWM1);
+    Serial.print(":");
+    Serial.print(PWM2);
+    Serial.print(":");
+    Serial.print(TEMP);
+    Serial.print(":");
+    Serial.print(HUM_REL);
+    Serial.print(":");
+    Serial.print(DEWPOINT);
+    Serial.print(":");
+    Serial.print(VOLT);
+    Serial.print(":");
+    Serial.print(AMP);
+    Serial.print(":");
+    Serial.print(PWR);
+    Serial.print(":");
+    Serial.print(PWR_TOTAL);
+    Serial.print(":");
+    Serial.print(PWM_AUTO);
+    Serial.print(":");
+    Serial.print(EXT1);
+    Serial.print(":");
+    Serial.print(EXT2);
+    Serial.print("#");
+  }
 }
 
 

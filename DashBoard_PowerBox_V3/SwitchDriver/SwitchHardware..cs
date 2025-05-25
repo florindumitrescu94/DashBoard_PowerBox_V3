@@ -91,8 +91,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string SwitchDescDC2 = "DC Port 2";
         internal static string SwitchDescDC3 = "DC Port 3";
         internal static string SwitchDescDC45 = "DC Ports 4 and 5";
-        internal static string SwitchDescPWM1 = "PWM Port A power in 10% increments";
-        internal static string SwitchDescPWM2 = "PWM Port B power in 10% increments";
+        internal static string SwitchDescPWM1 = "PWM Port A power in 5% increments";
+        internal static string SwitchDescPWM2 = "PWM Port B power in 5% increments";
         internal static string SwitchDescTemp = "Temperature (C)";
         internal static string SwitchDescHum = "Relative Humidity (%)";
         internal static string SwitchDescDew = "Dew Point (C)";
@@ -103,17 +103,6 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string SwitchDescA = "Auto PWM based on Temperature and Humidity";
         internal static string SwitchDescEXT1 = "External 1";
         internal static string SwitchDescEXT2 = "External 2";
-
-        internal static string SwitchStateDC1Profile = "DC 1 State";
-        internal static string SwitchStateDC2Profile = "DC 2 State";
-        internal static string SwitchStateDC3Profile = "DC 3 State";
-        internal static string SwitchStateDC45Profile = "DC 4-5 State";
-        internal static string SwitchStatePWM1Profile = "PWM A State";
-        internal static string SwitchStatePWM2Profile = "PWM B State";
-        internal static string SwitchStateEXT1Profile = "External 1 State";
-        internal static string SwitchStateEXT2Profile = "External 2 State";
-
-
 
 
         internal static string SwitchStateDC1 = "0";
@@ -132,6 +121,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string SwitchStateA = "0";
         internal static string SwitchStateEXT1 = "0";
         internal static string SwitchStateEXT2 = "0";
+        internal static string KeepPWMOnOnDisconnect;
+        internal static string KeepPortsOnOnDisconnect;
+        internal static string KeepEXTOnOnDisconnect;
 
         internal static string[] SerialCommands = new string[16];
         internal static bool workerCanRun = false;
@@ -395,18 +387,31 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                     objSerial.Connected = true;
                     System.Threading.Thread.Sleep(Convert.ToInt16(ConnectionDelay));
                     objSerial.ClearBuffers();
-                    objSerial.Transmit(">READEEPROM#"); 
-                    objSerial.Transmit(">REFRESHDATA#");
-                    SerialString = objSerial.ReceiveTerminated("#").Replace("#", "");
                     workerCanRun = true;
 
                     // workerThread.Interrupt();
                 }
                 else
                 {
-                    objSerial.Transmit(">WRITEEEPROM#");
-                    SetSwitchValue(4, 0); ///Turns off PWM1 on disconnect
-                    SetSwitchValue(5, 0); ///Turns off PWM2 on disconnect
+                    if (KeepPWMOnOnDisconnect == "false")
+                    {
+                        SetSwitchValue(4, 0); ///Turns off PWM1 on disconnect
+                        SetSwitchValue(5, 0); ///Turns off PWM2 on disconnect
+                        SetSwitch(13, false); //Turns off AutoPWM
+                    }
+                    if (KeepPortsOnOnDisconnect == "false")
+                    {
+                        SetSwitch(0, false);
+                        SetSwitch(1, false);
+                        SetSwitch(2, false);
+                        SetSwitch(3, false);
+                    }
+                    if (KeepEXTOnOnDisconnect == "false")
+                    {
+                        SetSwitch(14, false);
+                        SetSwitch(15, false);
+                    }
+                    objSerial.Transmit(">WRITEEEPROM#"); // on disconnect, writes current values to EEPROM to be retreived when powerbox initiates next time
                     connectedState = false;
                     workerCanRun = false;
                     LogMessage("Connected Set", "Disconnecting from port " + comPort);
@@ -657,37 +662,31 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             Validate("GetSwitch", id);
             using (var driverProfile = new Profile())
             {
-                driverProfile.DeviceType = "Switch";
-                if ((id == 0) || (id == 1) || (id == 2) || (id == 3) || (id == 13) || (id == 14) || (id == 15))
+                if (id == 0) // only refreshes switch values on ID 0 to avoid overloading the arduino
                 {
-                    string Message = ">GET" + id + "#";
-                    objSerial.Transmit(Message);
-                    string Received = objSerial.ReceiveTerminated("#").Replace("#", "");
-                    LogMessage(Message, Received);
-                    bool rtrn = NumberToBool(Convert.ToDouble(Received));
-                    switch (id)
-                    {
-                        case 0: SwitchStateDC1 = Received; break;
-                        //Convert.ToDouble(SerialCommands[0]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC1))); return NumberToBool(DC1); 
-                        case 1: SwitchStateDC2 = Received; break;
-                        //Convert.ToDouble(SerialCommands[1]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC2))); return NumberToBool(DC2);
-                        case 2: SwitchStateDC3 = Received; break;
-                        //Convert.ToDouble(SerialCommands[2]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC3))); return NumberToBool(DC3); 
-                        case 3: SwitchStateDC45 = Received; break;
-                        //Convert.ToDouble(SerialCommands[3]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(DC45))); return NumberToBool(DC45);
-                        case 13: SwitchStateA = Received; break;
-                        //Convert.ToDouble(SerialCommands[13]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(AUTOPWM))); return NumberToBool(AUTOPWM);
-                        case 14: SwitchStateEXT1 = Received; break;
-                        //Convert.ToDouble(SerialCommands[14]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(EXT1))); return NumberToBool(EXT1);
-                        case 15: SwitchStateEXT2 = Received; break;
-                        //Convert.ToDouble(SerialCommands[15]); LogMessage("GetSwitch " + id.ToString(), Convert.ToString(NumberToBool(EXT2))); return NumberToBool(EXT2);
-                        default:
-                            break;
-                    }
-                    return rtrn;
-                    
+                    objSerial.Transmit(">REFRESH#");
+                    SerialCommands = objSerial.ReceiveTerminated("#").Replace("#", "").Split(':');
                 }
-                else 
+                driverProfile.DeviceType = "Switch";
+                if (new[] { 0, 1, 2, 3, 13, 14, 15 }.Contains(id))
+                {
+                        bool rtrn = NumberToBool(Convert.ToDouble(SerialCommands[id]));
+                        switch (id)
+                        {
+                            case 0: SwitchStateDC1 = SerialCommands[id]; break;
+                            case 1: SwitchStateDC2 = SerialCommands[id]; break;
+                            case 2: SwitchStateDC3 = SerialCommands[id]; break; 
+                            case 3: SwitchStateDC45 = SerialCommands[id]; break;
+                            case 13: SwitchStateA = SerialCommands[id]; break;
+                            case 14: SwitchStateEXT1 = SerialCommands[id]; break;
+                            case 15: SwitchStateEXT2 = SerialCommands[id]; break;
+                            default:
+                                break;
+                        }
+                        LogMessage("GetSwitch " + id.ToString(), SerialCommands[id]);
+                    return rtrn;  
+                }
+                else
                 {
                     LogMessage("GetSwitch", $"GetSwitch({id}) - not implemented");
                     throw new MethodNotImplementedException("GetSwitch");
@@ -728,7 +727,6 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                             LogMessage("SetSwitch", $"SetSwitch({id}) - not implemented");
                             throw new MethodNotImplementedException("SetSwitch");
                     }
-                    //WriteProfile();
                 }
             }
         }
@@ -840,20 +838,24 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         /// <returns>The value for this switch, this is expected to be between <see cref="MinSwitchValue"/> and
         /// <see cref="MaxSwitchValue"/>.</returns>
         internal static double GetSwitchValue(short id)
-        {
+        { 
             Validate("GetSwitchValue", id);
-            string Message = ">GET" + id + "#";
-            objSerial.Transmit(Message);
-            string Received = objSerial.ReceiveTerminated("#").Replace("#", "");
-            LogMessage(Message, Received);
-            if ((id == 4) || (id == 5) || (id == 6) || (id == 7) || (id == 8) || (id == 9) || (id == 10) || (id == 11) || (id == 12))
+            if (id == 0) // only refreshes values when ID is 0 to avoid overloading the arduino
             {
-                return Convert.ToDouble(Received);
-            }   
-            else
-            {      LogMessage("GetSwitchValue", $"GetSwitchValue({id}) - not implemented");
-                    throw new MethodNotImplementedException("GetSwitchValue");
+                objSerial.Transmit(">REFRESH#");
+                SerialCommands = objSerial.ReceiveTerminated("#").Replace("#", "").Split(':');
             }
+                if (new[] { 4, 5, 6, 7, 8, 9, 10, 11, 12 }.Contains(id)) 
+                {
+                    return Convert.ToDouble(SerialCommands[id]);
+                }
+                else
+                {
+                    LogMessage("GetSwitchValue", $"GetSwitchValue({id}) - not implemented");
+                    throw new MethodNotImplementedException("GetSwitchValue");
+                }
+            
+            
         }
 
         /// <summary>
@@ -880,19 +882,20 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                         LogMessage("SetSwitchValue ", id.ToString(), value);
                         SwitchValue = ">SETPWM1_" + value.ToString() + "#";
                         objSerial.Transmit(SwitchValue);
+                        SwitchStatePWM1 = SwitchValue;
                     }
                     else if (id == 5)
                     {
                         LogMessage("SetSwitchValue ", id.ToString(), value);
                         SwitchValue = ">SETPWM2_" + value.ToString() + "#";
                         objSerial.Transmit(SwitchValue);
+                        SwitchStatePWM2 = SwitchValue; 
                     }
                     else
                     {
                         LogMessage("SetSwitchValue", $"SetSwitchValue({id}) = {value} - not implemented");
                         throw new MethodNotImplementedException("SetSwitchValue");
                     }
-                    WriteProfile();
                 }
             }
         }
@@ -1013,14 +1016,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 SwitchNamePWM2 = driverProfile.GetValue(DriverProgId, SwitchNamePWM2Profile, string.Empty, SwitchNamePWM2Default);
                 SwitchNameEXT1 = driverProfile.GetValue(DriverProgId, SwitchNameEXT1Profile, string.Empty, SwitchNameEXT1Default);
                 SwitchNameEXT2 = driverProfile.GetValue(DriverProgId, SwitchNameEXT2Profile, string.Empty, SwitchNameEXT2Default);
-                SwitchStateDC1 = driverProfile.GetValue(DriverProgId, SwitchStateDC1Profile);
-                SwitchStateDC2 = driverProfile.GetValue(DriverProgId, SwitchStateDC2Profile);
-                SwitchStateDC3 = driverProfile.GetValue(DriverProgId, SwitchStateDC3Profile);
-                SwitchStateDC45 = driverProfile.GetValue(DriverProgId, SwitchStateDC45Profile);
-                SwitchStatePWM1 = driverProfile.GetValue(DriverProgId, SwitchStatePWM1Profile );
-                SwitchStatePWM2 = driverProfile.GetValue(DriverProgId, SwitchStatePWM2Profile);
-                SwitchStateEXT1 = driverProfile.GetValue(DriverProgId, SwitchStateEXT1Profile);
-                SwitchStateEXT2 = driverProfile.GetValue(DriverProgId, SwitchStateEXT2Profile);
+                KeepEXTOnOnDisconnect = driverProfile.GetValue(DriverProgId, "Keep External Ports ON on disconnect", string.Empty, "false");
+                KeepPortsOnOnDisconnect =driverProfile.GetValue(DriverProgId, "Keep DC Ports ON on disconnect", string.Empty, "false");
+                KeepPWMOnOnDisconnect = driverProfile.GetValue(DriverProgId, "Keep PWM Ports ON on disconnect", string.Empty, "false");
             }
         }
 
@@ -1042,15 +1040,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 driverProfile.WriteValue(DriverProgId, SwitchNamePWM2Profile, SwitchNamePWM2);
                 driverProfile.WriteValue(DriverProgId, SwitchNameEXT1Profile, SwitchNameEXT1);
                 driverProfile.WriteValue(DriverProgId, SwitchNameEXT2Profile, SwitchNameEXT2);
-                driverProfile.WriteValue(DriverProgId, SwitchStateDC1Profile, SwitchStateDC1);
-                driverProfile.WriteValue(DriverProgId, SwitchStateDC2Profile, SwitchStateDC2);
-                driverProfile.WriteValue(DriverProgId, SwitchStateDC3Profile, SwitchStateDC3);
-                driverProfile.WriteValue(DriverProgId, SwitchStateDC45Profile, SwitchStateDC45);
-                driverProfile.WriteValue(DriverProgId, SwitchStatePWM1Profile, SwitchStatePWM1);
-                driverProfile.WriteValue(DriverProgId, SwitchStatePWM2Profile, SwitchStatePWM2);
-                driverProfile.WriteValue(DriverProgId, SwitchStateEXT1Profile, SwitchStateEXT1);
-                driverProfile.WriteValue(DriverProgId, SwitchStateEXT2Profile, SwitchStateEXT2);
-
+                driverProfile.WriteValue(DriverProgId, "Keep External Ports ON on disconnect", KeepEXTOnOnDisconnect);
+                driverProfile.WriteValue(DriverProgId, "Keep DC Ports ON on disconnect", KeepPortsOnOnDisconnect);
+                driverProfile.WriteValue(DriverProgId, "Keep PWM Ports ON on disconnect", KeepPWMOnOnDisconnect);
             }
         }
 

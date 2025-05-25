@@ -50,6 +50,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 SwitchHardware.SwitchNamePWM2 = (string)PWMBText.Text;
                 SwitchHardware.SwitchNameEXT1 = (string)EXT1Text.Text;
                 SwitchHardware.SwitchNameEXT2 = (string)EXT2Text.Text;
+                SwitchHardware.KeepPWMOnOnDisconnect = BoolToString(keepPWMon.Checked);
+                SwitchHardware.KeepPortsOnOnDisconnect = BoolToString(KeepPortsOn.Checked);
+                SwitchHardware.KeepEXTOnOnDisconnect = BoolToString(keepEXTOn.Checked);
             }
         }
 
@@ -108,6 +111,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             PWMBText.Text = SwitchHardware.SwitchNamePWM2;
             EXT1Text.Text = SwitchHardware.SwitchNameEXT1;
             EXT2Text.Text = SwitchHardware.SwitchNameEXT2;
+            KeepPortsOn.Checked = StringToBool(SwitchHardware.KeepPortsOnOnDisconnect);
+            keepEXTOn.Checked = StringToBool(SwitchHardware.KeepEXTOnOnDisconnect);
+            keepPWMon.Checked = StringToBool(SwitchHardware.KeepPWMOnOnDisconnect);
 
             tl.LogMessage("InitUI", $"Set UI controls to Trace: {chkTrace.Checked}, COM Port: {comboBoxComPort.SelectedItem}");
         }
@@ -124,6 +130,16 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 BringToFront();
                 TopMost = false;
             }
+        }
+        private static bool StringToBool(string str)
+        {
+            if (str == "false") return false;
+            else return true;
+        }
+        private static string BoolToString (bool boolin)
+        {
+            if (boolin) return "true";
+            else return "false";
         }
 
 
