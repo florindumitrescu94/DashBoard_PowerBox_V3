@@ -13,7 +13,7 @@ Also, I've included an "Always On" port, which passes through the current and vo
 I've added two optocouplers which can be used to control external equipment (see explanation below). Using optocouplers ensures good insulation between the Arduino and the external equipment, so that a malfunction of one does not affect the other. This feature will allow the control of external non-ASCOM connected equipment, like relays or other types of switches to control devices around the observatory. The case was not designed to incorporate any connectors for the External switches, but a 3.5mm mono audio jack is recommended. 
 
 ## PWM Automation based on ambiental condition without temperature probes
-I've removed the two temperature probe leads, as, based on personal experience, I rarely used them and they seemd hit or miss. Now, the automation of the dew heaters is done based on temperature and dew point.
+I've removed the two temperature probe leads, as, based on personal experience, I rarely used them and they seemd hit or miss. Now, the automation of the dew heaters is done based on temperature and dew point. (Using the dedicated Control Center app, you can set three levels of agressivity for the PWM automation. In NINA/APT, this automation is fixed on the "Mid" level.
 
 ![image](https://github.com/user-attachments/assets/fa1a87fb-6252-4845-8d0e-0e9f8fe0fbea)
 
@@ -22,6 +22,14 @@ I've removed the two temperature probe leads, as, based on personal experience, 
 You can now control the power box through a dedicated app, built to interface with the ASCOM Driver. This allows you to use the power box without using NINA or other sequencer software. This could be useful in case you want to use planetary imaging software, like SharpCap, which, usually, do not have any Switch control module. Also, inside the Control Center, you can toggle the automatic PWM function for each output separately and you can control the aggresivity of the Auto PWM in 3 steps. 
 ![image](https://github.com/user-attachments/assets/e18eb556-9941-4ef8-9128-08519908c3b6)
 
+## Ability to rename each port
+When opening the Setup Dialog, you can rename any PWM, DC or EXT port, so you can keep track of which port each device is plugged in.
+
+## Choose what happens when you disconnect from the device
+Iside the Setup Dialog, you can choose to keep the ports on or turn them off when disconnecting. There are three options, one for the DC ports, one for the External ports and one for the PWM ports. 
+
+## Carry over port state settings between control computers
+On disconnect, the Arduino will store the ports state inside the EEPROM and will retreive them when the device is reinitiated. 
 
 ## Improved case design
 The case has been redesigned for easier assembly and mounting options. It now has a 1/4 20 photo thread built into the base and the screws that keep the box closed have been now relocated to the top of the lid, instead of on its' side. The walls of the case have been improved, as well, now being thicker and stronger. The case now sports labels for each input and output and little holes for LEDs under each DC Port, to easily identify if power is applied to the port. 
