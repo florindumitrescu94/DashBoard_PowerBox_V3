@@ -142,10 +142,10 @@ namespace ASCOM.DashBoardPowerBoxV3App
         {
             while (driver.Connected)
             {
-                await Task.Delay(3000);
+                await Task.Delay(5000);
                 MethodInvoker refresh = delegate ()
                 {
-                    while (driver.Connected)
+                    if (driver.Connected)
                     {
                         buttonDC1.Checked = driver.GetSwitch(0);
                         buttonDC2.Checked = driver.GetSwitch(1);
@@ -242,7 +242,6 @@ namespace ASCOM.DashBoardPowerBoxV3App
                     }
 
                 };
-                Thread.Sleep(2000);
                 this.Invoke(refresh);
             }
         }
