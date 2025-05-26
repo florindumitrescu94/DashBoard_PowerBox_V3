@@ -698,6 +698,7 @@
             this.levelB.Size = new System.Drawing.Size(53, 21);
             this.levelB.TabIndex = 87;
             this.levelB.Text = "Low";
+            this.levelB.SelectedIndexChanged += new System.EventHandler(this.levelB_SelectedIndexChanged);
             // 
             // levelA
             // 
@@ -715,6 +716,7 @@
             this.levelA.Size = new System.Drawing.Size(53, 21);
             this.levelA.TabIndex = 86;
             this.levelA.Text = "Low";
+            this.levelA.SelectedIndexChanged += new System.EventHandler(this.levelA_SelectedIndexChanged);
             // 
             // label38
             // 

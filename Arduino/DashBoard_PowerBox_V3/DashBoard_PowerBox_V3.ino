@@ -23,8 +23,12 @@ int EXT1;
 int EXT2;
 int PWM1;
 int PWM2;
-int level = 15; // equivalent to Mid in Control Center app, decrease number to lower agresivity, increase to raise (10 is low, 15 is mid, 20 is High). this determines how fast the power reaches 100% from the moment TEMP-Dew Point gets lower than 10 degrees.
-int PWM_AUTO = 0;
+int level_a = 15; // MID by default
+int level_b = 15; // MID by default
+int levela_show = 1;
+int levelb_show = 1;
+int PWM_AUTO_A = 0;
+int PWM_AUTO_B = 0;
 float TEMP = 0.0;
 int HUM_REL = 0;
 float DEWPOINT = 0.0;
@@ -53,7 +57,7 @@ double ACS_resolution;
 #define EOCOMMAND           '#'           // defines the end character of a command
 #define SOCOMMAND           '>'           // defines the start character of a command
 #define REFRESH             200           // read values every REFRESH milliseconds
-#define PWMREFRESH          60000         // adjust PWM every 60 seconds
+#define PWMREFRESH          1000        // adjust PWM every 60 seconds
 char* queue[QUEUELENGTH];
 int queueHead = -1;
 int queueCount = 0;
@@ -123,6 +127,8 @@ void setup()
    DC45=EEPROM.read(6);
    EXT1=EEPROM.read(7);
    EXT2=EEPROM.read(8);
+   level_a=EEPROM.read(9);
+   level_b=EEPROM.read(10);
    PWM1=EEPROM.read(1);
    PWM2=EEPROM.read(2);
     digitalWrite(DC1_PIN,DC1);
@@ -210,12 +216,20 @@ void processSerialCommand() {
   else if (cmd.substring(0,6) == "SETDC4") SET_DC_PIN(4,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());  
   else if (cmd.substring(0,7) == "SETEXT1") SET_EXT_PIN(1,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
   else if (cmd.substring(0,7) == "SETEXT2") SET_EXT_PIN(2,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); 
-  else if (cmd == "SETAUTOPWM_1") {
-      PWM_AUTO = 1;
+  else if (cmd == "SETAUTOPWMA_1") {
+      PWM_AUTO_A = 1;
   }
-  else if (cmd == "SETAUTOPWM_0") {
-    PWM_AUTO = 0;
+  else if (cmd == "SETAUTOPWMA_0") {
+    PWM_AUTO_A = 0;
   }
+  else if (cmd == "SETAUTOPWMB_1") {
+      PWM_AUTO_B = 1;
+  }
+  else if (cmd == "SETAUTOPWMB_0") {
+    PWM_AUTO_B = 0;
+  }
+  else if (cmd.substring(0,9) == "SETLEVELA") SET_LEVEL(1,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());
+  else if (cmd.substring(0,9) == "SETLEVELB") SET_LEVEL(2,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());
 else if (cmd == "WRITEEEPROM") //writes current values to EEPROM before disconnecting
   {
     EEPROM.update(1,PWM1);
@@ -226,6 +240,8 @@ else if (cmd == "WRITEEEPROM") //writes current values to EEPROM before disconne
     EEPROM.update(6,DC45);
     EEPROM.update(7,EXT1);
     EEPROM.update(8,EXT2);
+    EEPROM.update(9,level_a);
+    EEPROM.update(10,level_b);
   } 
   else if (cmd == "READEEPROM") //reads existing PWM1 and 2 values from EEPROM and sets them on PWM1 and 2 on connection
   {
@@ -237,55 +253,45 @@ else if (cmd == "WRITEEEPROM") //writes current values to EEPROM before disconne
   
   else if (cmd.substring(0,7) == "SETPWM1") SET_PWM_POWER(1,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
   else if (cmd.substring(0,7) == "SETPWM2") SET_PWM_POWER(2,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
-  else if (cmd == "GET0")  {Serial.print(DC1);Serial.print("#");}
-  else if (cmd == "GET1")  {Serial.print(DC2);Serial.print("#");}
-  else if (cmd == "GET2")  {Serial.print(DC3);Serial.print("#");}
-  else if (cmd == "GET3")  {Serial.print(DC45);Serial.print("#");}
-  else if (cmd == "GET4")  {Serial.print(PWM1);Serial.print("#");}
-  else if (cmd == "GET5")  {Serial.print(PWM2);Serial.print("#");}
-  else if (cmd == "GET6")  {Serial.print(TEMP);Serial.print("#");}
-  else if (cmd == "GET7")  {Serial.print(HUM_REL);Serial.print("#");}
-  else if (cmd == "GET8")  {Serial.print(DEWPOINT);Serial.print("#");}
-  else if (cmd == "GET9")  {Serial.print(VOLT);Serial.print("#");}
-  else if (cmd == "GET10")  {Serial.print(AMP);Serial.print("#");}
-  else if (cmd == "GET11")  {Serial.print(PWR);Serial.print("#");}
-  else if (cmd == "GET12")  {Serial.print(PWR_TOTAL);Serial.print("#");}
-  else if (cmd == "GET13")  {Serial.print(PWM_AUTO);Serial.print("#");}
-  else if (cmd == "GET14")  {Serial.print(EXT1);Serial.print("#");}
-  else if (cmd == "GET15")  {Serial.print(EXT2);Serial.print("#");}
   else if (cmd = "REFRESH")
   {
-    Serial.print(DC1);
+    Serial.print(DC1); //0
     Serial.print(":");
-    Serial.print(DC2);
+    Serial.print(DC2); //1
     Serial.print(":");
-    Serial.print(DC3);
+    Serial.print(DC3); //2
     Serial.print(":");
-    Serial.print(DC45);
+    Serial.print(DC45); //3
     Serial.print(":");
-    Serial.print(PWM1);
+    Serial.print(PWM1); //4
     Serial.print(":");
-    Serial.print(PWM2);
+    Serial.print(PWM2); //5
     Serial.print(":");
-    Serial.print(TEMP);
+    Serial.print(TEMP); //6
     Serial.print(":");
-    Serial.print(HUM_REL);
+    Serial.print(HUM_REL); //7
     Serial.print(":");
-    Serial.print(DEWPOINT);
+    Serial.print(DEWPOINT); //8
     Serial.print(":");
-    Serial.print(VOLT);
+    Serial.print(VOLT); //9
     Serial.print(":");
-    Serial.print(AMP);
+    Serial.print(AMP); //10
     Serial.print(":");
-    Serial.print(PWR);
+    Serial.print(PWR); //11
     Serial.print(":");
-    Serial.print(PWR_TOTAL);
+    Serial.print(PWR_TOTAL); //12
     Serial.print(":");
-    Serial.print(PWM_AUTO);
+    Serial.print(PWM_AUTO_A); //13
     Serial.print(":");
-    Serial.print(EXT1);
+    Serial.print(PWM_AUTO_B); //14
     Serial.print(":");
-    Serial.print(EXT2);
+    Serial.print(levela_show); //15
+    Serial.print(":");
+    Serial.print(levelb_show); //16
+    Serial.print(":");
+    Serial.print(EXT1); //17
+    Serial.print(":");
+    Serial.print(EXT2); //18
     Serial.print("#");
   }
 }
@@ -319,7 +325,8 @@ void loop()
     case stateAutoPWM:
       now = millis();
       if ( now > lastm + PWMREFRESH ) {
-        RUN_AUTO_PWM();
+        RUN_AUTO_PWM_A();
+        RUN_AUTO_PWM_B();
         lastm = now;
       }
       last = now;
@@ -453,25 +460,48 @@ void SET_PWM_POWER(int pwmno,int state) {
 
 
 // RUN PWM AUTO 
-void RUN_AUTO_PWM() {
-  if (PWM_AUTO == 1)
+void RUN_AUTO_PWM_A() {
+  if (PWM_AUTO_A == 1)
   {
     double delta_td = TEMP-DEWPOINT;
     int delta_t = round(delta_td);
     if (delta_t <= 10)
     {
-      int pwm_val = (10-delta_t) * level;
+      int pwm_val = (10-delta_t) * level_a;
       if (pwm_val >=100)
       {
         pwm_val = 100;
       }
      SET_PWM_POWER(1,pwm_val);
-     SET_PWM_POWER(2,pwm_val);
+     //SET_PWM_POWER(2,pwm_val);
     }
     else 
     {
       SET_PWM_POWER(1,0);
+      //SET_PWM_POWER(2,0);
+    }
+  }
+}
+void RUN_AUTO_PWM_B()
+{
+  if (PWM_AUTO_B == 1)
+  {
+    double delta_td = TEMP-DEWPOINT;
+    int delta_t = round(delta_td);
+    if (delta_t <= 10)
+    {
+      int pwm_val = (10-delta_t) * level_b;
+      if (pwm_val >=100)
+      {
+        pwm_val = 100;
+      }
+     SET_PWM_POWER(2,pwm_val);
+
+    }
+    else 
+    {
       SET_PWM_POWER(2,0);
+
     }
   }
 }
@@ -540,5 +570,15 @@ void RUN_AUTO_PWM() {
  if (state > 100) return 100;
  if (state < 0) return 0;
  else return state;
+}
+
+void SET_LEVEL(int port, int level)
+{
+  int convert;
+  if (level == 1) convert = 10;
+  else if (level == 2) convert = 15;
+  else if (level == 3) convert = 20; 
+  if (port == 1) {level_a = convert; levela_show = level;}
+  if (port == 2) {level_b = convert; levelb_show = level;}
 }
  

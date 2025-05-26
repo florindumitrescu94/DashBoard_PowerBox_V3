@@ -47,8 +47,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string ConnectionDelay;
 
         internal static string numSwitchProfileName = "Max Switches";
-        internal static short numSwitchDefault = 16;
-        internal static short numSwitch = 16;
+        internal static short numSwitchDefault = 19;
+        internal static short numSwitch = 19;
 
         internal static string SwitchNameDC1Profile = "DC 1 Name";
         internal static string SwitchNameDC2Profile = "DC 2 Name";
@@ -81,9 +81,13 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string SwitchNameCurrent = "Current";
         internal static string SwitchNamePower = "Power";
         internal static string SwitchNameEnergy = "Energy";
-        internal static string SwitchNameA = "Auto PWM";
+        internal static string SwitchNameAutoA = "Auto PWM A";
+        internal static string SwitchNameAutoB = "Auto PWM B";
         internal static string SwitchNameEXT1 = "EXT 1";
         internal static string SwitchNameEXT2 = "EXT 2";
+        internal static string SwitchNameLevelA = "PWM A automation level";
+        internal static string SwitchNameLevelB= "PWM B automation level";
+
         internal static string SerialString;
 
         
@@ -100,9 +104,12 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string SwitchDescCurrent = "Current (A)";
         internal static string SwitchDescPower = "Power (W)";
         internal static string SwitchDescEnergy = "Energy (Wh) used since connection";
-        internal static string SwitchDescA = "Auto PWM based on Temperature and Humidity";
+        internal static string SwitchDescAutoA = "Auto PWM based on Temperature and Humidity (PWM A)";
+        internal static string SwitchDescAutoB = "Auto PWM based on Temperature and Humidity (PWM B)";
         internal static string SwitchDescEXT1 = "External 1";
         internal static string SwitchDescEXT2 = "External 2";
+        internal static string SwitchDescLevelA = "Aggressivity level for PWM A Automation (1=Low, 2=Mid, 3=High)";
+        internal static string SwitchDescLevelB = "Aggressivity level for PWM B Automation (1=Low, 2=Mid, 3=High)";
 
 
         internal static string SwitchStateDC1 = "0";
@@ -118,14 +125,17 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
         internal static string SwitchStateCurrent = "0.00";
         internal static string SwitchStatePower = "0.00";
         internal static string SwitchStateEnergy = "0.00";
-        internal static string SwitchStateA = "0";
+        internal static string SwitchStateAutoA = "0";
+        internal static string SwitchStateAutoB = "0";
+        internal static string SwitchStateLevelA = "1";
+        internal static string SwitchStateLevelB = "1";
         internal static string SwitchStateEXT1 = "0";
         internal static string SwitchStateEXT2 = "0";
         internal static string KeepPWMOnOnDisconnect;
         internal static string KeepPortsOnOnDisconnect;
         internal static string KeepEXTOnOnDisconnect;
 
-        internal static string[] SerialCommands = new string[16];
+        internal static string[] SerialCommands = new string[19];
         internal static bool workerCanRun = false;
 
         private static string DriverProgId = ""; // ASCOM DeviceID (COM ProgID) for this driver, the value is set by the driver's class initialiser.
@@ -397,7 +407,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                     {
                         SetSwitchValue(4, 0); ///Turns off PWM1 on disconnect
                         SetSwitchValue(5, 0); ///Turns off PWM2 on disconnect
-                        SetSwitch(13, false); //Turns off AutoPWM
+                        SetSwitch(13, false); //Turns off AutoPWM A
+                        SetSwitch(14, false); // Turns off AutoPWM B
                     }
                     if (KeepPortsOnOnDisconnect == "false")
                     {
@@ -408,8 +419,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                     }
                     if (KeepEXTOnOnDisconnect == "false")
                     {
-                        SetSwitch(14, false);
                         SetSwitch(15, false);
+                        SetSwitch(16, false);
                     }
                     objSerial.Transmit(">WRITEEEPROM#"); // on disconnect, writes current values to EEPROM to be retreived when powerbox initiates next time
                     connectedState = false;
@@ -533,9 +544,13 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 case 10: return SwitchNameCurrent;
                 case 11: return SwitchNamePower;
                 case 12: return SwitchNameEnergy;
-                case 13: return SwitchNameA;
-                case 14: return SwitchNameEXT1;
-                case 15: return SwitchNameEXT2;
+                case 13: return SwitchNameAutoA;
+                case 14: return SwitchNameAutoB;
+                case 15: return SwitchNameLevelA;
+                case 16: return SwitchNameLevelB;
+                case 17: return SwitchNameEXT1;
+                case 18: return SwitchNameEXT2;
+                
                 default:
                     LogMessage("GetSwitchName", $"GetSwitchName({id}) - Invalid Switch ID!");
                     throw new InvalidValueException("Switch", numSwitch.ToString(), string.Format("0 to {0}", Convert.ToInt16(numSwitch) - 1));
@@ -568,9 +583,13 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                     case 10: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameCurrent = name; break;
                     case 11: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNamePower = name; break;
                     case 12: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameEnergy = name; break;
-                    case 13: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameA = name; break;
-                    case 14: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameEXT1 = name; break;
-                    case 15: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameEXT2 = name; break;
+                    case 13: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameAutoA = name; break;
+                    case 14: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameAutoB = name; break;
+                    case 15: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameLevelA = name; break;
+                    case 16: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameLevelB = name; break;
+                    case 17: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameEXT1 = name; break;
+                    case 18: LogMessage("SetSwitchName " + id.ToString(), name); SwitchNameEXT2 = name; break;
+                    
                     default:
                         LogMessage("SetSwitchName", $"SetSwitchName({id}) - Invalid Switch ID!");
                         throw new InvalidValueException("Switch", numSwitch.ToString(), string.Format("0 to {0}", Convert.ToInt16(numSwitch) - 1));
@@ -605,9 +624,13 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 case 10: return SwitchDescCurrent;
                 case 11: return SwitchDescPower;
                 case 12: return SwitchDescEnergy;
-                case 13: return SwitchDescA;
-                case 14: return SwitchDescEXT1;
-                case 15: return SwitchDescEXT2;
+                case 13: return SwitchDescAutoA;
+                case 14: return SwitchDescAutoB;
+                case 15: return SwitchDescLevelA;
+                case 16: return SwitchDescLevelB;
+                case 17: return SwitchDescEXT1;
+                case 18: return SwitchDescEXT2;
+                
                 default:
                     LogMessage("GetSwitchDescription", $"GetSwitchDescription({id}) - MethodNotImplemented");
                     throw new MethodNotImplementedException("GetSwitchDescription");
@@ -643,7 +666,10 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 case 12: LogMessage("CanWrite", $"CanWrite({id}): false"); return false; 
                 case 13: LogMessage("CanWrite", $"CanWrite({id}): true"); return true; 
                 case 14: LogMessage("CanWrite", $"CanWrite({id}): true"); return true; 
-                case 15: LogMessage("CanWrite", $"CanWrite({id}): true"); return true; 
+                case 15: LogMessage("CanWrite", $"CanWrite({id}): true"); return true;
+                case 16: LogMessage("CanWrite", $"CanWrite({id}): true"); return true;
+                case 17: LogMessage("CanWrite", $"CanWrite({id}): true"); return true;
+                case 18: LogMessage("CanWrite", $"CanWrite({id}): true"); return true;
                 default:
                     LogMessage("CanWrite", $"CanWrite({id}): MethodNotImplemented");
                     throw new MethodNotImplementedException("CanWrite");
@@ -666,9 +692,10 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 {
                     objSerial.Transmit(">REFRESH#");
                     SerialCommands = objSerial.ReceiveTerminated("#").Replace("#", "").Split(':');
+                    LogMessage("Received",SerialCommands.ToString());
                 }
                 driverProfile.DeviceType = "Switch";
-                if (new[] { 0, 1, 2, 3, 13, 14, 15 }.Contains(id))
+                if (new[] { 0, 1, 2, 3, 13, 14, 17, 18 }.Contains(id))
                 {
                         bool rtrn = NumberToBool(Convert.ToDouble(SerialCommands[id]));
                         switch (id)
@@ -677,9 +704,10 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                             case 1: SwitchStateDC2 = SerialCommands[id]; break;
                             case 2: SwitchStateDC3 = SerialCommands[id]; break; 
                             case 3: SwitchStateDC45 = SerialCommands[id]; break;
-                            case 13: SwitchStateA = SerialCommands[id]; break;
-                            case 14: SwitchStateEXT1 = SerialCommands[id]; break;
-                            case 15: SwitchStateEXT2 = SerialCommands[id]; break;
+                            case 13: SwitchStateAutoA = SerialCommands[id]; break;
+                            case 14: SwitchStateAutoB = SerialCommands[id]; break;
+                            case 17: SwitchStateEXT1 = SerialCommands[id]; break;
+                            case 18: SwitchStateEXT2 = SerialCommands[id]; break;
                             default:
                                 break;
                         }
@@ -720,9 +748,10 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                         case 1: SwitchStateDC2 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC2_" + stringState + "#"); break;
                         case 2: SwitchStateDC3 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC3_" + stringState + "#"); break;
                         case 3: SwitchStateDC45 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC4_" + stringState + "#"); break;
-                        case 13: SwitchStateA = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETAUTOPWM_" + stringState + "#"); break;
-                        case 14: SwitchStateEXT1 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETEXT1_" + stringState + "#"); break;
-                        case 15: SwitchStateEXT2 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETEXT2_" + stringState + "#"); break;
+                        case 13: SwitchStateAutoA = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETAUTOPWMA_" + stringState + "#"); break;
+                        case 14: SwitchStateAutoB = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETAUTOPWMB_" + stringState + "#"); break;
+                        case 17: SwitchStateEXT1 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETEXT1_" + stringState + "#"); break;
+                        case 18: SwitchStateEXT2 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETEXT2_" + stringState + "#"); break;
                         default:
                             LogMessage("SetSwitch", $"SetSwitch({id}) - not implemented");
                             throw new MethodNotImplementedException("SetSwitch");
@@ -760,7 +789,10 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 case 12: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1000000"); return 1000000;
                 case 13: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
                 case 14: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
-                case 15: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
+                case 15: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 3"); return 3;
+                case 16: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 3"); return 3;
+                case 17: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
+                case 18: LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): 1"); return 1;
                 default:
                     LogMessage("MaxSwitchValue", $"MaxSwitchValue({id}): MethodNotImplemented");
                     throw new MethodNotImplementedException("MaxSwitchValue");
@@ -792,7 +824,10 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 case 12: LogMessage("MinSwitchValue", $"MinSwitchValue({id}): 0"); return 0;
                 case 13: LogMessage("MinSwitchValue", $"MinSwitchValue({id}): 0"); return 0;
                 case 14: LogMessage("MinSwitchValue", $"MinSwitchValue({id}): 0"); return 0;
-                case 15: LogMessage("MinSwitchValue", $"MinSwitchValue({id}): 0"); return 0;
+                case 15: LogMessage("MinSwitchValue", $"MinSwitchValue({id}): 1"); return 1;
+                case 16: LogMessage("MinSwitchValue", $"MinSwitchValue({id}): 1"); return 1;
+                case 17: LogMessage("MinSwitchValue", $"MinSwitchValue({id}): 0"); return 0;
+                case 18: LogMessage("MinSwitchValue", $"MinSwitchValue({id}): 0"); return 0;
                 default:
                     LogMessage("MinSwitchValue", $"MinSwitchValue({id}) - not implemented");
                     throw new MethodNotImplementedException("MinSwitchValue");
@@ -825,6 +860,9 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 case 13: LogMessage("SwitchStep", $"SwitchStep({id}): 1"); return 1;
                 case 14: LogMessage("SwitchStep", $"SwitchStep({id}): 1"); return 1;
                 case 15: LogMessage("SwitchStep", $"SwitchStep({id}): 1"); return 1;
+                case 16: LogMessage("SwitchStep", $"SwitchStep({id}): 1"); return 1;
+                case 17: LogMessage("SwitchStep", $"SwitchStep({id}): 1"); return 1;
+                case 18: LogMessage("SwitchStep", $"SwitchStep({id}): 1"); return 1;
                 default:
                     LogMessage("SwitchStep", $"SwitchStep({id}) - not implemented");
                     throw new MethodNotImplementedException("SwitchStep");
@@ -845,7 +883,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                 objSerial.Transmit(">REFRESH#");
                 SerialCommands = objSerial.ReceiveTerminated("#").Replace("#", "").Split(':');
             }
-                if (new[] { 4, 5, 6, 7, 8, 9, 10, 11, 12 }.Contains(id)) 
+                if (new[] { 4, 5, 6, 7, 8, 9, 10, 11, 12, 15 ,16 }.Contains(id)) 
                 {
                     return Convert.ToDouble(SerialCommands[id]);
                 }
@@ -879,17 +917,31 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                     driverProfile.DeviceType = "Switch";
                     if (id == 4)
                     {
-                        LogMessage("SetSwitchValue ", id.ToString(), value);
+                        LogMessage("SetSwitchValue PWM A", id.ToString(), value);
                         SwitchValue = ">SETPWM1_" + value.ToString() + "#";
                         objSerial.Transmit(SwitchValue);
                         SwitchStatePWM1 = SwitchValue;
                     }
                     else if (id == 5)
                     {
-                        LogMessage("SetSwitchValue ", id.ToString(), value);
+                        LogMessage("SetSwitchValue PWM B", id.ToString(), value);
                         SwitchValue = ">SETPWM2_" + value.ToString() + "#";
                         objSerial.Transmit(SwitchValue);
                         SwitchStatePWM2 = SwitchValue; 
+                    }
+                    else if (id == 15)
+                    {
+                        LogMessage("SetSwitchValue Level A", id.ToString(), value);
+                        SwitchValue = ">SETLEVELA_" + value.ToString() + "#";
+                        objSerial.Transmit(SwitchValue);
+                        SwitchStateLevelA = SwitchValue;
+                    }
+                    else if (id == 16)
+                    {
+                        LogMessage("SetSwitchValue Level B", id.ToString(), value);
+                        SwitchValue = ">SETLEVELB_" + value.ToString() + "#";
+                        objSerial.Transmit(SwitchValue);
+                        SwitchStateLevelB = SwitchValue;
                     }
                     else
                     {

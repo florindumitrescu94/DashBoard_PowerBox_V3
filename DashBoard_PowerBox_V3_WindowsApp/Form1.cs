@@ -153,8 +153,8 @@ namespace ASCOM.DashBoardPowerBoxV3App
                         buttonDC45.Checked = driver.GetSwitch(3);
                         currentPWMA.Text = driver.GetSwitchValue(4).ToString();
                         currentPWMB.Text = driver.GetSwitchValue(5).ToString();
-                        buttonEXT1.Checked = driver.GetSwitch(14);
-                        buttonEXT2.Checked = driver.GetSwitch(15);
+                        buttonEXT1.Checked = driver.GetSwitch(17);
+                        buttonEXT2.Checked = driver.GetSwitch(18);
                         temp.Text = driver.GetSwitchValue(6).ToString();
                         humidity.Text = driver.GetSwitchValue(7).ToString();
                         dewpoint.Text = driver.GetSwitchValue(8).ToString();
@@ -165,80 +165,28 @@ namespace ASCOM.DashBoardPowerBoxV3App
                         //valuePWMB.Text = currentPWMB.Text;
                         double delta_t_d = Convert.ToDouble(temp.Text) - Convert.ToDouble(dewpoint.Text);
                         int delta_t = Convert.ToInt16(Math.Round(delta_t_d));
-                        driver.SetSwitch(13, false); //Turn Arduino-level AUTO PWM off, since dedicated software uses 3 separate levels;
+                        //driver.SetSwitch(13, false); //Turn Arduino-level AUTO PWM off, since dedicated software uses 3 separate levels;
                         current.Text = driver.GetSwitchValue(10).ToString();
                         power.Text = driver.GetSwitchValue(11).ToString();
                         energy.Text = driver.GetSwitchValue(12).ToString();
-                        if (autoPWMA.Checked)
+                        autoPWMA.Checked = driver.GetSwitch(13);
+                        autoPWMB.Checked = driver.GetSwitch(14);
+                        switch (driver.GetSwitchValue(15))
                         {
-                            previous_pwm_a = Int16.Parse(valuePWMA.Text);
-                            if (levelA.Text == "Low")
-                            {
-                                if (delta_t <= 10)
-                                {
-                                    int pwma_low = (10 - delta_t) * 10;
-                                    if (pwma_low >= 100) { pwma_low = 100; };
-                                    valuePWMA.Text = pwma_low.ToString();
-                                }
-                                else { valuePWMA.Text = "0"; }
-                            }
-                            else if (levelA.Text == "Mid")
-                            {
-                                if (delta_t <= 10)
-                                {
-                                    int pwma_mid = (10 - delta_t) * 15;
-                                    if (pwma_mid >= 100) { pwma_mid = 100; };
-                                    valuePWMA.Text = pwma_mid.ToString();
-                                }
-                                else { valuePWMA.Text = "0"; }
-                            }
-                            else if (levelA.Text == "High")
-                            {
-                                if (delta_t <= 10)
-                                {
-                                    int pwma_high = (10 - delta_t) * 20;
-                                    if (pwma_high >= 100) { pwma_high = 100; };
-                                    valuePWMA.Text = pwma_high.ToString();
-                                }
-                                else { valuePWMA.Text = "0"; }
-                            }
-                            if (previous_pwm_a != Int16.Parse(valuePWMA.Text)) { driver.SetSwitchValue(4, Convert.ToDouble(valuePWMA.Text)); currentPWMA.Text = driver.GetSwitchValue(4).ToString(); }
+                            case 1: levelA.Text = "Low"; break;
+                            case 2: levelA.Text = "Mid"; break;
+                            case 3: levelA.Text = "High"; break;
+                            default: break;
                         }
-                        if (autoPWMB.Checked)
+                        levelB.Enabled = true;
+                        switch (driver.GetSwitchValue(16))
                         {
-                            previous_pwm_b = Int16.Parse(valuePWMB.Text);
-                            if (levelB.Text == "Low")
-                            {
-                                if (delta_t <= 10)
-                                {
-                                    int pwmb_low = (10 - delta_t) * 10;
-                                    if (pwmb_low >= 100) { pwmb_low = 100; };
-                                    valuePWMB.Text = pwmb_low.ToString();
-                                }
-                                else { valuePWMB.Text = "0"; }
-                            }
-                            else if (levelB.Text == "Mid")
-                            {
-                                if (delta_t <= 10)
-                                {
-                                    int pwmb_mid = (10 - delta_t) * 15;
-                                    if (pwmb_mid >= 100) { pwmb_mid = 100; };
-                                    valuePWMB.Text = pwmb_mid.ToString();
-                                }
-                                else { valuePWMB.Text = "0"; }
-                            }
-                            else if (levelB.Text == "High")
-                            {
-                                if (delta_t <= 10)
-                                {
-                                    int pwmb_high = (10 - delta_t) * 20;
-                                    if (pwmb_high >= 100) { pwmb_high = 100; };
-                                    valuePWMB.Text = pwmb_high.ToString();
-                                }
-                                else { valuePWMB.Text = "0"; }
-                            }
-                            if (previous_pwm_b != Int16.Parse(valuePWMB.Text)) { driver.SetSwitchValue(5, Convert.ToDouble(valuePWMB.Text)); currentPWMB.Text = driver.GetSwitchValue(5).ToString(); }
+                            case 1: levelB.Text = "Low"; break;
+                            case 2: levelB.Text = "Mid"; break;
+                            case 3: levelB.Text = "High"; break;
+                            default: break;
                         }
+
                     }
 
                 };
@@ -401,9 +349,9 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 namePWMA.Enabled = true;
                 namePWMB.Text= driver.GetSwitchName(5);
                 namePWMB.Enabled = true;
-                nameEXT1.Text= driver.GetSwitchName(14);
+                nameEXT1.Text= driver.GetSwitchName(17);
                 nameEXT1.Enabled = true;
-                nameEXT2.Text= driver.GetSwitchName(15);
+                nameEXT2.Text= driver.GetSwitchName(18);
                 nameEXT2.Enabled = true;
                 buttonDC1.Checked = driver.GetSwitch(0);
                 buttonDC1.Enabled = true;
@@ -421,9 +369,26 @@ namespace ASCOM.DashBoardPowerBoxV3App
                 Mid_PWMB.Enabled = true;
                 autoPWMA.Enabled = true;
                 autoPWMB.Enabled = true;
-                buttonEXT1.Checked = driver.GetSwitch(14);
+                levelA.Enabled = true;
+                switch (driver.GetSwitchValue(15))
+                {
+                    case 1:levelA.Text = "Low"; break;
+                    case 2:levelA.Text = "Mid"; break;
+                    case 3:levelA.Text = "High"; break;
+                    default: break;
+                }
+                levelB.Enabled = true;
+                switch (driver.GetSwitchValue(16))
+                {
+                    case 1: levelB.Text = "Low"; break;
+                    case 2: levelB.Text = "Mid"; break;
+                    case 3: levelB.Text = "High"; break;
+                    default: break;
+                }
+                
+                buttonEXT1.Checked = driver.GetSwitch(17);
                 buttonEXT1.Enabled = true;
-                buttonEXT2.Checked = driver.GetSwitch(15);
+                buttonEXT2.Checked = driver.GetSwitch(18);
                 buttonEXT2.Enabled = true;
                 currentPWMA.Text = driver.GetSwitchValue(4).ToString();
                 currentPWMB.Text = driver.GetSwitchValue(5).ToString();
@@ -609,7 +574,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
         {
             if (IsConnected)
             {
-                driver.SetSwitch(14, buttonEXT1.Checked);
+                driver.SetSwitch(17, buttonEXT1.Checked);
                 Thread.Sleep(200);
                 //buttonEXT1.Checked = driver.GetSwitch(14);
             }
@@ -619,7 +584,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
         {
             if (IsConnected)
             {
-                driver.SetSwitch(15, buttonEXT2.Checked);
+                driver.SetSwitch(18, buttonEXT2.Checked);
                 Thread.Sleep(200);
                 //buttonEXT2.Checked = driver.GetSwitch(15);
             }
@@ -828,6 +793,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
         {
             if (IsConnected)
             {
+                driver.SetSwitch(13,autoPWMA.Checked);
                 if (!autoPWMA.Checked)
                 {
                     addPWMA.Enabled = true;
@@ -856,6 +822,7 @@ namespace ASCOM.DashBoardPowerBoxV3App
         {
             if (IsConnected)
             {
+                driver.SetSwitch(14, autoPWMB.Checked);
                 if (!autoPWMB.Checked)
                 {
                     setPWMB.Enabled = true;
@@ -905,6 +872,44 @@ namespace ASCOM.DashBoardPowerBoxV3App
         private void label4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void levelA_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (IsConnected)
+            {
+                if (levelA.Text == "Low")
+                {
+                    driver.SetSwitchValue(15, 1);
+                }
+                if (levelA.Text == "Mid")
+                {
+                    driver.SetSwitchValue(15, 2);
+                }
+                if (levelA.Text == "High")
+                {
+                    driver.SetSwitchValue(15, 3);
+                }
+            }
+        }
+
+        private void levelB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (IsConnected)
+            {
+                if (levelB.Text == "Low")
+                {
+                    driver.SetSwitchValue(16, 1);
+                }
+                if (levelB.Text == "Mid")
+                {
+                    driver.SetSwitchValue(16, 2);
+                }
+                if (levelB.Text == "High")
+                {
+                    driver.SetSwitchValue(16, 3);
+                }
+            }
         }
     }
 }
