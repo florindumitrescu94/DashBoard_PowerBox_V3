@@ -15,14 +15,14 @@ DHTStable DHT;
 
 
 //CODE VARIABLES
-int DC1;
-int DC2;
-int DC3;
-int DC45;
-int EXT1;
-int EXT2;
-int PWM1;
-int PWM2;
+int DC1=0;
+int DC2=0;
+int DC3=0;
+int DC45=0;
+int EXT1=0;
+int EXT2=0;
+int PWM1=0;
+int PWM2=0;
 int level_a = 15; // MID by default
 int level_b = 15; // MID by default
 int levela_show = 1;
@@ -121,16 +121,24 @@ void setup()
 
   //INITIALIZE PIN STATE FROM EEPROM
    //
-   DC1=EEPROM.read(3);
-   DC2=EEPROM.read(4);
-   DC3=EEPROM.read(5);
-   DC45=EEPROM.read(6);
-   EXT1=EEPROM.read(7);
-   EXT2=EEPROM.read(8);
-   level_a=EEPROM.read(9);
-   level_b=EEPROM.read(10);
-   PWM1=EEPROM.read(1);
-   PWM2=EEPROM.read(2);
+   if (EEPROM.read(40) != 255)
+   // eerpom initializes with 255 on all values on a fresh arduino. That throws off ASCOM driver. 
+   //To fix this, we check address 40 to see if it is 255. That means this is a first boot for the arduino. 
+   //It skips the values, setting them to 0 as in the variable declaration step.
+   //We then set the address 40 to 1 so that next time, we know it is not a first run and the EEPROM can be read
+   {
+    DC1=EEPROM.read(3);
+    DC2=EEPROM.read(4);
+    DC3=EEPROM.read(5);
+    DC45=EEPROM.read(6);
+    EXT1=EEPROM.read(7);
+    EXT2=EEPROM.read(8);
+    level_a=EEPROM.read(9);
+    level_b=EEPROM.read(10);
+    PWM1=EEPROM.read(1);
+    PWM2=EEPROM.read(2);
+   }
+   EEPROM.update(40,1);//on first run on a fresh arduino, update address 40 to 1, so it will run the eeprom reads
     digitalWrite(DC1_PIN,DC1);
     digitalWrite(DC2_PIN,DC2);
     digitalWrite(DC3_PIN,DC3);
