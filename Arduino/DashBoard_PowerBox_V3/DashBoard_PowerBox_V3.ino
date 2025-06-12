@@ -261,7 +261,7 @@ else if (cmd == "WRITEEEPROM") //writes current values to EEPROM before disconne
   
   else if (cmd.substring(0,7) == "SETPWM1") SET_PWM_POWER(1,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
   else if (cmd.substring(0,7) == "SETPWM2") SET_PWM_POWER(2,cmd.substring((cmd.indexOf('_')+1),(cmd.indexOf('_')+4)).toInt());
-  else if (cmd = "REFRESH")
+  else if (cmd == "REFRESH")
   {
     Serial.print(DC1); //0
     Serial.print(":");
