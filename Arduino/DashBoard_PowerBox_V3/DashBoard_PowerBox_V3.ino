@@ -236,21 +236,8 @@ void processSerialCommand() {
   else if (cmd == "SETAUTOPWMB_0") {
     PWM_AUTO_B = 0;
   }
-  else if (cmd.substring(0,9) == "SETLEVELA") SET_LEVEL(1,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());
-  else if (cmd.substring(0,9) == "SETLEVELB") SET_LEVEL(2,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt());
-else if (cmd == "WRITEEEPROM") //writes current values to EEPROM before disconnecting
-  {
-    EEPROM.update(1,PWM1);
-    EEPROM.update(2,PWM2);
-    EEPROM.update(3,DC1);
-    EEPROM.update(4,DC2);
-    EEPROM.update(5,DC3);
-    EEPROM.update(6,DC45);
-    EEPROM.update(7,EXT1);
-    EEPROM.update(8,EXT2);
-    EEPROM.update(9,level_a);
-    EEPROM.update(10,level_b);
-  } 
+  else if (cmd.substring(0,9) == "SETLEVELA") {SET_LEVEL(1,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); EEPROM.update(9,level_a);}
+  else if (cmd.substring(0,9) == "SETLEVELB") {SET_LEVEL(2,(cmd.substring((cmd.indexOf('_')+1),cmd.indexOf('_')+2)).toInt()); EEPROM.update(10,level_b);}
   else if (cmd == "READEEPROM") //reads existing PWM1 and 2 values from EEPROM and sets them on PWM1 and 2 on connection
   {
     PWM1=EEPROM.read(1);
@@ -357,25 +344,21 @@ void SET_DC_PIN(int pin, int state){
        {
         digitalWrite(DC1_PIN, LOW);
         DC1 = 0;
-        
        }
        else if (pin == 2) 
        {
         digitalWrite(DC2_PIN, LOW);
         DC2 = 0;
-        
        }
        else if (pin == 3) 
        {
         digitalWrite(DC3_PIN, LOW);
         DC3 = 0;
-        
        }
        else if (pin == 4) 
        {
         digitalWrite(DC45_PIN, LOW);
         DC45 = 0;
-        
        }
        }
       else if (state == 1) 
@@ -384,27 +367,27 @@ void SET_DC_PIN(int pin, int state){
        {
         digitalWrite(DC1_PIN, HIGH);
         DC1 = 1;
-        
        }
        else if (pin == 2) 
        {
         digitalWrite(DC2_PIN, HIGH);
         DC2 = 1;
-        
        }
        else if (pin == 3) 
        {
         digitalWrite(DC3_PIN, HIGH);
         DC3 = 1;
-         
        }
        else if (pin == 4) 
        {
-      digitalWrite(DC45_PIN, HIGH);
-      DC45 = 1;
-       
+        digitalWrite(DC45_PIN, HIGH);
+        DC45 = 1;
        }
       }
+      if (pin == 1) EEPROM.update(3,DC1);
+      else if (pin == 2) EEPROM.update(4,DC2);
+      else if (pin == 3) EEPROM.update(5,DC3);
+      else if (pin == 4) EEPROM.update(6,DC45);
 }
 //END SET DC PIN
 
@@ -442,6 +425,8 @@ void SET_EXT_PIN(int pin, int state){
         
        }
       }
+    EEPROM.update(7,EXT1);
+    EEPROM.update(8,EXT2);
 }
 //END SET EXT PIN
 
@@ -460,6 +445,8 @@ void SET_PWM_POWER(int pwmno,int state) {
     analogWrite(PWM2_PIN, pwm_value);
     PWM2 = state;
     }
+    EEPROM.update(1,PWM1);
+    EEPROM.update(2,PWM2);
 }
 //END SET PWM POWER
 

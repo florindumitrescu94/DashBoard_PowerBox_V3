@@ -422,7 +422,8 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                         SetSwitch(15, false);
                         SetSwitch(16, false);
                     }
-                    objSerial.Transmit(">WRITEEEPROM#"); // on disconnect, writes current values to EEPROM to be retreived when powerbox initiates next time
+                    //Thread.Sleep(1000);
+                    //objSerial.Transmit(">SETDC45_0#");
                     connectedState = false;
                     workerCanRun = false;
                     LogMessage("Connected Set", "Disconnecting from port " + comPort);
@@ -744,14 +745,14 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                     driverProfile.DeviceType = "Switch";
                     switch (id)
                     {
-                        case 0: SwitchStateDC1 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC1_" + stringState + "#"); break;
-                        case 1: SwitchStateDC2 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC2_" + stringState + "#"); break;
-                        case 2: SwitchStateDC3 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC3_" + stringState + "#"); break;
-                        case 3: SwitchStateDC45 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC4_" + stringState + "#"); break;
-                        case 13: SwitchStateAutoA = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETAUTOPWMA_" + stringState + "#"); break;
-                        case 14: SwitchStateAutoB = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETAUTOPWMB_" + stringState + "#"); break;
-                        case 17: SwitchStateEXT1 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETEXT1_" + stringState + "#"); break;
-                        case 18: SwitchStateEXT2 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETEXT2_" + stringState + "#"); break;
+                        case 0: SwitchStateDC1 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC1_" + stringState + "#");  break;
+                        case 1: SwitchStateDC2 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC2_" + stringState + "#");  break;
+                        case 2: SwitchStateDC3 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC3_" + stringState + "#");  break;
+                        case 3: SwitchStateDC45 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETDC4_" + stringState + "#");  break;
+                        case 13: SwitchStateAutoA = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETAUTOPWMA_" + stringState + "#");  break;
+                        case 14: SwitchStateAutoB = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETAUTOPWMB_" + stringState + "#");  break;
+                        case 17: SwitchStateEXT1 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETEXT1_" + stringState + "#");  break;
+                        case 18: SwitchStateEXT2 = stringState; LogMessage("SetSwitch " + id.ToString(), stringState); objSerial.Transmit(">SETEXT2_" + stringState + "#");  break;
                         default:
                             LogMessage("SetSwitch", $"SetSwitch({id}) - not implemented");
                             throw new MethodNotImplementedException("SetSwitch");
@@ -921,13 +922,15 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                         SwitchValue = ">SETPWM1_" + value.ToString() + "#";
                         objSerial.Transmit(SwitchValue);
                         SwitchStatePWM1 = SwitchValue;
+                        
                     }
                     else if (id == 5)
                     {
                         LogMessage("SetSwitchValue PWM B", id.ToString(), value);
                         SwitchValue = ">SETPWM2_" + value.ToString() + "#";
                         objSerial.Transmit(SwitchValue);
-                        SwitchStatePWM2 = SwitchValue; 
+                        SwitchStatePWM2 = SwitchValue;
+                        
                     }
                     else if (id == 15)
                     {
@@ -935,6 +938,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
                         SwitchValue = ">SETLEVELA_" + value.ToString() + "#";
                         objSerial.Transmit(SwitchValue);
                         SwitchStateLevelA = SwitchValue;
+
                     }
                     else if (id == 16)
                     {
