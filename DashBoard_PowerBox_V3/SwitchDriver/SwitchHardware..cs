@@ -24,6 +24,7 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace ASCOM.DashBoardPowerBoxV3.Switch
 {
@@ -886,7 +887,7 @@ namespace ASCOM.DashBoardPowerBoxV3.Switch
             }
                 if (new[] { 4, 5, 6, 7, 8, 9, 10, 11, 12, 15 ,16 }.Contains(id)) 
                 {
-                    return Convert.ToDouble(SerialCommands[id]);
+                    return Convert.ToDouble(SerialCommands[id], CultureInfo.InvariantCulture);
                 }
                 else
                 {
